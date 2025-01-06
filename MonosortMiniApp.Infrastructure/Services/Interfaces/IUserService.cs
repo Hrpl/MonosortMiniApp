@@ -15,4 +15,5 @@ public interface IUserService
     public Task<bool> CheckedUserByLoginAsync(string login);
     public Task<bool> LoginUserAsync(Domain.Commons.Request.LoginRequest request);
     public Task UserConfirmAsync(string login);
+    public Task DeleteUserAsync(string login);
 }

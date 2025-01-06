@@ -35,6 +35,13 @@ public class UserService : IUserService
         await _query.ExecuteAsync(query);
     }
 
+    public async Task DeleteUserAsync(string login)
+    {
+        var query = _query.Query(TableName).Where("Login", login).AsDelete();
+
+        await _query.ExecuteAsync(query);
+    }
+
     public async Task<bool> LoginUserAsync(LoginRequest request)
     {
         var query = _query.Query(TableName)

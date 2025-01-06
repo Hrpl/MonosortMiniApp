@@ -2,6 +2,8 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MonosortMiniApp.API.Services.Implementations;
+using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.Options;
 using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
@@ -54,6 +56,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IJwtHelper, JwtHelper>();
             services.AddScoped<IDbConnectionManager, DbConnectionManager>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
         }
     }
 }
