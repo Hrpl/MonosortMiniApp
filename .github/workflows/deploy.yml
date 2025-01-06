@@ -39,7 +39,7 @@ jobs:
             
 
             # Перемещение в директорию проекта
-            cd /home/user1
+            cd /home/user1/MonosortMiniApp
             docker-compose down
             docker-compose pull
             docker-compose up -d --build
