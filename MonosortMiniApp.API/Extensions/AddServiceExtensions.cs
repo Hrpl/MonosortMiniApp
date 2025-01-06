@@ -48,6 +48,7 @@ namespace MonosortMiniApp.API.Extensions
         {
             services.AddScoped<IJwtHelper, JwtHelper>();
             services.AddScoped<IDbConnectionManager, DbConnectionManager>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

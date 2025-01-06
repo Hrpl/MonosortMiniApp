@@ -59,5 +59,5 @@ public class JwtHelper : IJwtHelper
         {
             throw new Exception($"Error decoding JWT: {ex.Message}", ex);
         }
-    }W
+    }
 }
