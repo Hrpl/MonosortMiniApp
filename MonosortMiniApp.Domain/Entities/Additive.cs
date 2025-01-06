@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace MonosortMiniApp.Domain.Entities;
 
-[Table(EntityInformation.Dictionary.Desserts, Schema = EntityInformation.Dictionary.Scheme)]
-public class Dessert : BaseEntity
+[Table("Additive", Schema = EntityInformation.Dictionary.Scheme)]
+public class Additive : BaseEntity
 {
+    public int TypeAdditiveId { get; set; }
     public string Name { get; set; }
     public int Price { get; set; }
     public string Photo { get; set; }

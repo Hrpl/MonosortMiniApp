@@ -11,8 +11,8 @@ namespace MonosortMiniApp.Infrastructure.Context;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<Milk> Milks { get; set; }
-    public DbSet<Sirup> Sirups { get; set; }
+    public DbSet<Additive> Milks { get; set; }
+    public DbSet<TypeAdditive> Sirups { get; set; }
     public DbSet<Volume> Volumes { get; set; }
     public DbSet<Dessert> Desserts { get; set; }
     public DbSet<Drink> Drinks { get; set; }
