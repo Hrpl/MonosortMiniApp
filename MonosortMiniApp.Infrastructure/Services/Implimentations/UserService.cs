@@ -42,12 +42,35 @@ public class UserService : IUserService
         await _query.ExecuteAsync(query);
     }
 
+    public Task<UserModel> GetUserAsync(string login)
+    {
+        var query = _query.Query(TableName)
+            .Where("Login", login)
+            .Select("Login",
+            "Password",
+            "IsConfirmed",
+            "CreatedAt",
+            "UpdatedAt");
+
+        var result = _query.FirstOrDefaultAsync<UserModel>(query);
+        return result;
+    }
+
+    public async Task<int> GetUserIdAsync(string login)
+    {
+        var query = _query.Query(TableName)
+            .Where("Login", login)
+            .Select("Id");
+
+        var result = await _query.FirstAsync<int>(query);
+        return result;
+    }
+
     public async Task<bool> LoginUserAsync(LoginRequest request)
     {
         var query = _query.Query(TableName)
             .Where("Login", request.Login)
             .Where("Password", request.Password)
-            .Where("IsConfirmed", true)
             .Select("Login");
 
         var result = await _query.FirstOrDefaultAsync<string>(query);

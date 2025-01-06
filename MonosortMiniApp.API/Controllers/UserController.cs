@@ -29,7 +29,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] string email)
     {
         var user = await _userService.CheckedUserByLoginAsync(email);
-        if (user is false)
+        if (user is true)
         {
             await _userService.UserConfirmAsync(email);
 
