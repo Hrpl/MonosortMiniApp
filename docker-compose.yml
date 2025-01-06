@@ -31,8 +31,24 @@ services:
       - ASPNETCORE_HTTP_PORTS=5075
     ports:
       - '5075:5075'
+    depends_on:
+      - db
     networks:
       - network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  db:
+    image: postgres:latest
+    container_name: PostgreSQL
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2208
+      POSTGRES_DB: MonosortMiniApp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - network
