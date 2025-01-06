@@ -4,6 +4,7 @@ using MonosortMiniApp.API.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddDataBase();
 builder.AddJwt();
+builder.AddOptionsSmtp();
 // Add services to the container.
 
 builder.Services.AddControllers();

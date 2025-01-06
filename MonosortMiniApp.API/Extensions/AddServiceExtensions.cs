@@ -2,6 +2,7 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MonosortMiniApp.Domain.Commons.Options;
 using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -34,7 +35,11 @@ namespace MonosortMiniApp.API.Extensions
             });
             builder.Services.AddAuthorization();
         }
-
+        public static void AddOptionsSmtp(this WebApplicationBuilder builder)
+        {
+            var services = builder.Services;
+            services.Configure<SmtpOptions>(builder.Configuration.GetSection(SmtpOptions.Key));
+        }
         public static void AddMapster(this IServiceCollection services)
         {
             TypeAdapterConfig config = TypeAdapterConfig.GlobalSettings;
