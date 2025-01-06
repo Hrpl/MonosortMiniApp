@@ -35,7 +35,7 @@ jobs:
           passphrase: "" # Укажите, если ключ защищён паролем
           script: |
             # Обновление или клонирование репозитория
-            git clone https://github.com/Hrpl/MonosortMiniApp.git /home/user1
+            git clone https://github.com/Hrpl/MonosortMiniApp.git /home/user1/MonosortMiniApp
             
 
             # Перемещение в директорию проекта
