@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using MonosortMiniApp.API.Services.Implementations;
 using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.Options;
+using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -57,6 +58,10 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IDbConnectionManager, DbConnectionManager>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IDrinkService, DrinkService>();
+            services.AddScoped<IDictionaryService<MilkModel>, DictionaryService<MilkModel>>();
+            services.AddScoped<IDictionaryService<DessertModel>, DictionaryService<DessertModel>>();
+            services.AddScoped<IDictionaryService<SirupModels>, DictionaryService<SirupModels>>();
         }
     }
 }

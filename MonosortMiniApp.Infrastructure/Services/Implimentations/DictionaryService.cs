@@ -21,6 +21,7 @@ public class DictionaryService<T> : IDictionaryService<T>
         var query = _query.Query(tableName)
             .Where("Id", id)
             .Select("Id",
+            "Price",
             "Name",
             "Photo",
             "IsExistence");
