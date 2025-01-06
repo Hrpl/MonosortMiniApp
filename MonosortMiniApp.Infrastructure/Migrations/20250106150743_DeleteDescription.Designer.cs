@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MonosortMiniApp.Infrastructure.Context;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MonosortMiniApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250106150743_DeleteDescription")]
+    partial class DeleteDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,38 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Coffee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsExistence")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coffees", "dictionary");
+                });
 
             modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Dessert", b =>
                 {
@@ -43,10 +78,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
@@ -58,7 +89,7 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.ToTable("Desserts", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Drink", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Limonades", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,11 +110,7 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("TypeDrinkId")
+                    b.Property<int>("Price")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -91,7 +118,7 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Drinks");
+                    b.ToTable("Limonades", "dictionary");
                 });
 
             modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Milk", b =>
@@ -115,10 +142,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
@@ -128,37 +151,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Milks", "dictionary");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.PriceDrink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DrinkId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("VolumeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PriceDrinks");
                 });
 
             modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Sirup", b =>
@@ -182,10 +174,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
@@ -197,7 +185,7 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.ToTable("Sirups", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.TypeDrink", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Tea", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -211,16 +199,22 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsExistence")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypeDrinks");
+                    b.ToTable("Tea", "dictionary");
                 });
 
             modelBuilder.Entity("MonosortMiniApp.Domain.Entities.User", b =>
@@ -270,9 +264,15 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsExistence")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

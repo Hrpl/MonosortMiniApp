@@ -11,5 +11,4 @@ namespace MonosortMiniApp.Domain.Entities;
 [Table(EntityInformation.Dictionary.Desserts, Schema = EntityInformation.Dictionary.Scheme)]
 public class Dessert : BaseDictionaryEntity
 {
-    public string Description { get; set; }
 }

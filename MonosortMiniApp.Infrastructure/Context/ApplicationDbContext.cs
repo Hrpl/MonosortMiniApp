@@ -11,13 +11,13 @@ namespace MonosortMiniApp.Infrastructure.Context;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<Coffee> Coffees { get; set; }
-    public DbSet<Limonades> Limonades { get; set; }
     public DbSet<Milk> Milks { get; set; }
     public DbSet<Sirup> Sirups { get; set; }
-    public DbSet<Tea> Tea { get; set; }
     public DbSet<Volume> Volumes { get; set; }
     public DbSet<Dessert> Desserts { get; set; }
+    public DbSet<Drink> Drinks { get; set; }
+    public DbSet<TypeDrink> TypeDrinks { get; set; }
+    public DbSet<PriceDrink> PriceDrinks { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
         Database.Migrate();

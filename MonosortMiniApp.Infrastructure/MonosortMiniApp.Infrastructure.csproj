@@ -21,9 +21,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MonosortMiniApp.Domain\MonosortMiniApp.Domain.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\Implimentations\" />
-    <Folder Include="Services\Interfaces\" />
-  </ItemGroup>
 
 </Project>

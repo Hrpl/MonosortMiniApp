@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace MonosortMiniApp.Domain.Entities;
 
 [Table(EntityInformation.Dictionary.Volume, Schema = EntityInformation.Dictionary.Scheme)]
-public class Volume : BaseDictionaryEntity
+public class Volume : BaseEntity
 {
+    public string Name { get; set; }
 }
