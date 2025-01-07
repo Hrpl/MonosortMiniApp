@@ -16,20 +16,17 @@ public class AuthController : ControllerBase
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthController> _logger;
-    private readonly IUserTgService _userTgService;
 
     public AuthController(
         IJwtHelper jwtHelper,
         IMapper mapper,
         IUserService userService,
-        ILogger<AuthController> logger,
-        IUserTgService userTgService)
+        ILogger<AuthController> logger)
     {
         _jwtHelper = jwtHelper;
         _mapper = mapper;
         _logger = logger;
         _userService = userService;
-        _userTgService = userTgService;
     }
 
     [HttpPost("login")]
@@ -48,12 +45,4 @@ public class AuthController : ControllerBase
     }
 
 
-    [HttpPost("tg/{id}")]
-    public async Task<ActionResult<JwtResponse>> AuthTg(string id)
-    {
-        var model = new UserTgModel { TgUserId = id };
-        await _userTgService.CreateUserTg(model);
-
-        return Ok();
-    }
 }

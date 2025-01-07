@@ -18,7 +18,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Drink> Drinks { get; set; }
     public DbSet<TypeDrink> TypeDrinks { get; set; }
     public DbSet<PriceDrink> PriceDrinks { get; set; }
-    public DbSet<UserTg> TelegramUser {  get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
         Database.Migrate();
