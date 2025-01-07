@@ -9,7 +9,7 @@ EXPOSE 5075
 
 # Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+ARG BUILD_CONFIGURATION=Development
 WORKDIR /src
 COPY ["MonosortMiniApp.API/MonosortMiniApp.API.csproj", "MonosortMiniApp.API/"]
 RUN dotnet restore "./MonosortMiniApp.API/MonosortMiniApp.API.csproj"
@@ -19,7 +19,7 @@ RUN dotnet build "./MonosortMiniApp.API.csproj" -c $BUILD_CONFIGURATION -o /app/
 
 # Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
+ARG BUILD_CONFIGURATION=Development
 RUN dotnet publish "./MonosortMiniApp.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
