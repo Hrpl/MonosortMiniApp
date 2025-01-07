@@ -27,10 +27,7 @@ public class DbConnectionManager : IDbConnectionManager
     private NpgsqlConnection PostgresDbConnection => new(NpgsqlConnectionString);
 
     public QueryFactory PostgresQueryFactory => new(PostgresDbConnection, new PostgresCompiler(), 60)
-#if DEBUG
     {
         Logger = compiled => { _logger.LogInformation("Query = {@Query}", compiled.ToString()); }
-    }
-#endif
-    ;
+    };
 }
