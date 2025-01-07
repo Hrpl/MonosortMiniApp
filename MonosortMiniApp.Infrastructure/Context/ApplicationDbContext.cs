@@ -27,4 +27,9 @@ public class ApplicationDbContext : DbContext
     {
         this.Database.Migrate();
     }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+    }
 }
