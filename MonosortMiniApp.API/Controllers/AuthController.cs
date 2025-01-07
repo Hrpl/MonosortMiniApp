@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 
 namespace MonosortMiniApp.API.Controllers;
@@ -15,17 +16,20 @@ public class AuthController : ControllerBase
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthController> _logger;
+    private readonly IUserTgService _userTgService;
 
     public AuthController(
         IJwtHelper jwtHelper,
         IMapper mapper,
         IUserService userService,
-        ILogger<AuthController> logger)
+        ILogger<AuthController> logger,
+        IUserTgService userTgService)
     {
         _jwtHelper = jwtHelper;
         _mapper = mapper;
         _logger = logger;
         _userService = userService;
+        _userTgService = userTgService;
     }
 
     [HttpPost("login")]
@@ -41,5 +45,15 @@ public class AuthController : ControllerBase
         var jwt = _jwtHelper.CreateJwtAsync(id);
 
         return Ok(jwt);
+    }
+
+
+    [HttpPost("tg/{id}")]
+    public async Task<ActionResult<JwtResponse>> AuthTg(string id)
+    {
+        var model = new UserTgModel { TgUserId = id };
+        await _userTgService.CreateUserTg(model);
+
+        return Ok();
     }
 }
