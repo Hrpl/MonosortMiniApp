@@ -12,5 +12,7 @@ public static class DbExtensions
             builder.Configuration["ConnectionString:DefaultConnection"],
             o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
         ));
+
+        builder.Services.AddDbContext<ApplicationDbContext>();
     }
 }

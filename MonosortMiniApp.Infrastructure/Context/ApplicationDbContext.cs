@@ -25,5 +25,6 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        this.Database.Migrate();
     }
 }
