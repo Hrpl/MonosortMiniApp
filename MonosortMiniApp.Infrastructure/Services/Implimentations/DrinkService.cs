@@ -1,4 +1,5 @@
-﻿using MonosortMiniApp.Domain.Models;
+﻿using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using SqlKata.Execution;
 using System;
@@ -17,6 +18,17 @@ public class DrinkService : IDrinkService
     {
         _query = connectionManager.PostgresQueryFactory;
     }
+
+    public async Task<List<DrinkCategoryResponse>> GetDrinkCategoriesAsync()
+    {
+        var query = _query.Query("dictionary.TypeDrink")
+            .Select("Id",
+            "Name");
+
+        var result = await _query.GetAsync<DrinkCategoryResponse>(query);
+        return result.ToList();
+    }
+
     public async Task<List<GetManyDrinksModel>> GetManyDrinksAsync(int typeId)
     {
         var query = _query.Query(TableName)

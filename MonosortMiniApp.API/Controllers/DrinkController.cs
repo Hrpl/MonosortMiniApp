@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 
@@ -25,12 +26,15 @@ public class DrinkController : ControllerBase
         else return BadRequest("Неверный тип");
     }
 
-    // GET api/<DrinkController>/5
-    [HttpGet("{id}")]
-    public string GetAny(int id)
+    [HttpGet("category")]
+    public async Task<ActionResult<IEnumerable<DrinkCategoryResponse>>> GetCategory()
     {
-        return "value";
+        var response = await _drinkService.GetDrinkCategoriesAsync();
+
+        if (response != null) return Ok(response);
+        else return BadRequest("Ошибка получения категорий");
     }
+
 
     
 }

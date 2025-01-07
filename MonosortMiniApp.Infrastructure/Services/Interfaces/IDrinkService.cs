@@ -1,4 +1,5 @@
-﻿using MonosortMiniApp.Domain.Models;
+﻿using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,4 +11,5 @@ namespace MonosortMiniApp.Infrastructure.Services.Interfaces;
 public interface IDrinkService
 {
     public Task<List<GetManyDrinksModel>> GetManyDrinksAsync(int typeId);
+    public Task<List<DrinkCategoryResponse>> GetDrinkCategoriesAsync();
 }
