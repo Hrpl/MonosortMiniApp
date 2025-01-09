@@ -19,27 +19,31 @@ public class DrinkService : IDrinkService
         _query = connectionManager.PostgresQueryFactory;
     }
 
-    public async Task<List<DrinkCategoryResponse>> GetDrinkCategoriesAsync()
-    {
-        var query = _query.Query("dictionary.TypeDrink")
-            .Select("Id",
-            "Name");
-
-        var result = await _query.GetAsync<DrinkCategoryResponse>(query);
-        return result.ToList();
-    }
-
-    public async Task<List<GetManyDrinksModel>> GetManyDrinksAsync(int typeId)
+    public async Task<List<GetProductsResponse>> GetManyDrinksAsync(int typeId)
     {
         var query = _query.Query(TableName)
-            .Where("TypeDrinkId", typeId)
+            .Where("MenuId", typeId)
             .Where("IsDeleted", false)
             .Select("Id",
             "Name",
             "Photo",
             "IsExistence");
 
-        var result = await _query.GetAsync<GetManyDrinksModel>(query);
+        var result = await _query.GetAsync<GetProductsResponse>(query);
+
+        return result.ToList();
+    }
+
+    public async Task<List<VolumePriceModel>> GetVolumePricesAsync(int id)
+    {
+        var query = _query.Query("dictionary.PriceDrink as pd")
+            .Join("dictionary.Volumes as vl", "vl.Id", "pd.VolumeId")
+            .Where("pd.DrinkId", id)
+            .Select("pd.Price",
+            "vl.Name",
+            "vl.Size");
+
+        var result = await _query.GetAsync<VolumePriceModel>(query);
 
         return result.ToList();
     }

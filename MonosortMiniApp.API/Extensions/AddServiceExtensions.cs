@@ -59,8 +59,9 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDrinkService, DrinkService>();
-            services.AddScoped<IDictionaryService<DessertModel>, DictionaryService<DessertModel>>();
+            services.AddScoped<IDessertService, DessertService>();
             services.AddScoped<IAdditiveService, AdditiveService>();
+            services.AddScoped<IMenuService, MenuService>();
         }
     }
 }

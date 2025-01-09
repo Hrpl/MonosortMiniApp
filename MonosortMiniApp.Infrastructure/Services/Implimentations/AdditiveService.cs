@@ -30,4 +30,14 @@ public class AdditiveService : IAdditiveService
         var result = await _query.GetAsync<AdditiveModel>(query);
         return result.ToList();
     }
+
+    public async Task<List<GetTypeAdditive>> GetTypeAdditiveAsync()
+    {
+        var query = _query.Query("dictionary.TypeAdditive")
+            .Select("Id",
+            "Name");
+
+        var result = await _query.GetAsync<GetTypeAdditive>(query);
+        return result.ToList();
+    }
 }

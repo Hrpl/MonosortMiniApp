@@ -17,24 +17,15 @@ public class DrinkController : ControllerBase
         _drinkService = drinkService;
     }
 
-    [HttpGet("many/{typeId}")]
-    public async Task<ActionResult<IEnumerable<GetManyDrinksModel>>> GetMany([FromRoute] int typeId)
-    {
-        var response = await _drinkService.GetManyDrinksAsync(typeId);
 
-        if(response != null) return Ok(response);
-        else return BadRequest("Неверный тип");
-    }
-
-    [HttpGet("category")]
-    public async Task<ActionResult<IEnumerable<DrinkCategoryResponse>>> GetCategory()
+    [HttpGet("volume/{id}")]
+    public async Task<ActionResult<IEnumerable<VolumePriceModel>>> GetVolume(int id)
     {
-        var response = await _drinkService.GetDrinkCategoriesAsync();
+        var response = await _drinkService.GetVolumePricesAsync(id);
 
         if (response != null) return Ok(response);
-        else return BadRequest("Ошибка получения категорий");
+        else return BadRequest("Ошибка получения объёмов");
     }
 
 
-    
 }

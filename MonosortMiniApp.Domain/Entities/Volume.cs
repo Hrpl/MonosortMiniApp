@@ -12,4 +12,5 @@ namespace MonosortMiniApp.Domain.Entities;
 public class Volume : BaseEntity
 {
     public string Name { get; set; }
+    public string Size { get; set; }
 }

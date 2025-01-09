@@ -23,5 +23,14 @@ namespace MonosortMiniApp.API.Controllers
             else return BadRequest();
         }
 
+        [HttpGet("type")]
+        public async Task<ActionResult<List<AdditiveModel>>> GetTypeAdditive()
+        {
+            var response = await _additiveService.GetTypeAdditiveAsync();
+
+            if (response != null) return Ok(response);
+            else return BadRequest();
+        }
+
     }
 }

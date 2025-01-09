@@ -10,4 +10,6 @@ namespace MonosortMiniApp.Infrastructure.Services.Interfaces;
 public interface IAdditiveService
 {
     public Task<List<AdditiveModel>> GetManyAdditiveAsync(int typeId);
+
+    public Task<List<GetTypeAdditive>> GetTypeAdditiveAsync();
 }

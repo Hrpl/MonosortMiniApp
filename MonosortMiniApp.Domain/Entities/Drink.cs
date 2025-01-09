@@ -11,7 +11,7 @@ namespace MonosortMiniApp.Domain.Entities;
 [Table("Drinks", Schema = EntityInformation.Dictionary.Scheme)]
 public class Drink : BaseEntity
 {
-    public int TypeDrinkId { get; set; }
+    public int MenuId { get; set; }
     public string Name { get; set; }
     public bool IsExistence { get; set; } = true;
     public string Photo {  get; set; }

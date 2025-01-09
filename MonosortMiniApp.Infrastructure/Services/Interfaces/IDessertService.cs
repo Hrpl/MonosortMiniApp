@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace MonosortMiniApp.Infrastructure.Services.Interfaces;
 
-public interface IDrinkService
+public interface IDessertService
 {
-    public Task<List<GetProductsResponse>> GetManyDrinksAsync(int typeId);
-    public Task<List<VolumePriceModel>> GetVolumePricesAsync(int id);
+    public Task<List<GetProductsResponse>> GetAllAsync();
 }

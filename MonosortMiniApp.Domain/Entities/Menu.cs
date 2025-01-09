@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace MonosortMiniApp.Domain.Entities;
 
-[Table("TypeDrink", Schema = EntityInformation.Dictionary.Scheme)]
-public class TypeDrink : BaseEntity
+[Table("Menu", Schema = EntityInformation.Dictionary.Scheme)]
+public class Menu : BaseEntity
 {
     public string Name { get; set; }
 }
