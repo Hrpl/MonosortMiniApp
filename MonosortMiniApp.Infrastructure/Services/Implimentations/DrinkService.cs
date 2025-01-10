@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MonosortMiniApp.Domain.Constant.EntityInformation;
 
 namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 
 public class DrinkService : IDrinkService
 {
     private readonly QueryFactory _query;
-    private readonly string TableName = "dictionary.Drinks";
+    private readonly string TableName = "dictionary.Drinks as d";
     public DrinkService(IDbConnectionManager connectionManager)
     {
         _query = connectionManager.PostgresQueryFactory;
@@ -21,15 +22,26 @@ public class DrinkService : IDrinkService
 
     public async Task<List<GetProductsResponse>> GetManyDrinksAsync(int typeId)
     {
-        var query = _query.Query(TableName)
-            .Where("MenuId", typeId)
-            .Where("IsDeleted", false)
-            .Select("Id",
-            "Name",
-            "Photo",
-            "IsExistence");
+        var query = _query.Query("dictionary.Drinks as d")
+            .Where("d.MenuId", typeId)
+            .Where("d.IsDeleted", false)
+            .Select("d.Id",
+            "d.Name",
+            "d.Photo",
+            "d.IsExistence");
 
         var result = await _query.GetAsync<GetProductsResponse>(query);
+
+        foreach (var product in result) { 
+            query = _query.Query("dictionary.PriceDrink")
+                .Where("DrinkId", product.Id)
+                .Select("Price")
+                .OrderBy("Price")
+                .Limit(1);
+
+            var price = await _query.FirstAsync<int>(query);
+            product.Price = price;
+        }
 
         return result.ToList();
     }
