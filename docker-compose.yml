@@ -21,6 +21,7 @@ services:
       - network
     depends_on:
       - api
+      - mdb
 
   api:
     build:
@@ -38,6 +39,37 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  md:
+    build:
+      context: .
+      dockerfile: Form/Form.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5076
+    ports:
+      - '5076:5076'
+    depends_on:
+      - mdb
+    networks:
+      - network
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  mdb:
+    image: postgres:latest
+    container_name: mdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2208
+      POSTGRES_DB: Form
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - network
 
   db:
     image: postgres:latest

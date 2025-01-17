@@ -23,18 +23,22 @@ public class DrinkService : IDrinkService
     public async Task<List<GetProductsResponse>> GetManyDrinksAsync(int typeId)
     {
         var query = _query.Query("dictionary.Drinks as d")
+            .Join("dictionary.PriceDrink as ps", "ps.DrinkId", "d.Id")
+            .OrderBy("ps.Price")
+            .Limit(1)
             .Where("d.MenuId", typeId)
             .Where("d.IsDeleted", false)
             .Select("d.Id",
             "d.Name",
             "d.Photo",
-            "d.IsExistence");
+            "d.IsExistence",
+            "ps.Price");
 
         var result = await _query.GetAsync<GetProductsResponse>(query);
 
         foreach (var product in result) { 
             query = _query.Query("dictionary.PriceDrink")
-                .Where("DrinkId", product.Id)
+                .WhereRaw("DrinkId", product.Id)
                 .Select("Price")
                 .OrderBy("Price")
                 .Limit(1);
