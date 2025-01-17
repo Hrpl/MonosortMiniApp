@@ -22,7 +22,6 @@ services:
       - network
     depends_on:
       - api
-      - mdb
 
   api:
     build:
@@ -51,7 +50,7 @@ services:
     ports:
       - '5076:5076'
     depends_on:
-      - mdb
+      - db
     networks:
       - network
     volumes:
