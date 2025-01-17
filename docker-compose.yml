@@ -6,6 +6,7 @@ networks:
 
 volumes:
   postgres_data:
+  postgres_data2:
 
 services:
 
@@ -67,7 +68,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data2:/var/lib/postgresql/data
     networks:
       - network
 
