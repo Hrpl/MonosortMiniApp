@@ -62,6 +62,8 @@ public class FormsController : ControllerBase
                 .Replace("@ChildrenName", request.ChildrenName)
                 .Replace("@drink", drink)
                 .Replace("@reg", reg);
+            if (request.IsVisit) template.Replace("@visit", "Буду на свадьбе");
+            else template.Replace("@visit", "Не буду на свадьбе");
 
             var person = new SendEmailDto() { Email = "makarkapar@gmail.com", Name = "", Subject = "Notification", MessageBody = template };
 

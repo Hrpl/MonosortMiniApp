@@ -18,4 +18,5 @@ public class FormModels
     public bool BeChampagne { get; set; }
     public bool DontDrink { get; set; }
     public bool WillTheRegistration { get; set; }
+    public bool IsVisit { get; set; }
 }
