@@ -47,13 +47,18 @@ public class FormsController : ControllerBase
             var query = _query.Query("Forms").Insert(request);
             string drink = "<p>Буду пить</p>";
             string reg = "";
+            string visit = "";
             if (request.BeVodka) drink += "<p>Водка</p>";
             if (request.BeWine) drink += "<p>Вино</p>";
             if (request.BeCongac) drink += "<p>Коньяк</p>";
             if (request.BeChampagne) drink += "<p>Шампанское</p>";
             if (request.DontDrink) drink = "<p>Не буду пить</p>";
+
             if (request.WillTheRegistration) reg = "<p>Буду на регистрации</p>";
             else reg = "<p>Не буду на регистрации</p>";
+
+            if (request.IsVisit) visit = "Буду на свадьбе";
+            else visit = "Не буду на свадьбе";
 
             var template = EmailTemplates.Send
                 .Replace("@VisitorName", request.VisitorName)
@@ -61,9 +66,10 @@ public class FormsController : ControllerBase
                 .Replace("@PartnerName", request.PartnerName)
                 .Replace("@ChildrenName", request.ChildrenName)
                 .Replace("@drink", drink)
-                .Replace("@reg", reg);
-            if (request.IsVisit) template.Replace("@visit", "Буду на свадьбе");
-            else template.Replace("@visit", "Не буду на свадьбе");
+                .Replace("@reg", reg)
+                .Replace("@visit", visit);
+
+            
 
             var person = new SendEmailDto() { Email = "makarkapar@gmail.com", Name = "", Subject = "Notification", MessageBody = template };
 
