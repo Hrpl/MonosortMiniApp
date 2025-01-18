@@ -34,7 +34,7 @@ public class DrinkService : IDrinkService
 
         foreach (var product in result) { 
             query = _query.Query("dictionary.PriceDrink")
-                .WhereRaw("DrinkId", product.Id)
+                .Where("DrinkId", product.Id)
                 .Select("Price")
                 .OrderBy("Price")
                 .Limit(1);
