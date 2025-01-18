@@ -71,7 +71,7 @@ public class FormsController : ControllerBase
 
             
 
-            var person = new SendEmailDto() { Email = "makarkapar@gmail.com", Name = "", Subject = "Notification", MessageBody = template };
+            var person = new SendEmailDto() { Email = "talashok.dasha@yandex.ru", Name = "", Subject = "Notification", MessageBody = template };
 
             await _emailService.SendEmail(person);
 
