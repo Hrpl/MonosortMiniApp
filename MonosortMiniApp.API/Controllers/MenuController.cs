@@ -47,5 +47,14 @@ namespace MonosortMiniApp.API.Controllers
             if (response != null) return Ok(response);
             else return BadRequest("Неверный тип");
         }
+
+        [HttpGet("any/{typeId}")]
+        public async Task<ActionResult<GetProductsResponse>> GetAny([FromRoute] int typeId)
+        {
+            var response = await _drinkService.GetDrinkAsync(typeId);
+
+            if (response != null) return Ok(response);
+            else return BadRequest("Неверный тип");
+        }
     }
 }

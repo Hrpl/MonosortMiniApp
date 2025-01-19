@@ -12,4 +12,5 @@ public interface IDrinkService
 {
     public Task<List<GetProductsResponse>> GetManyDrinksAsync(int typeId);
     public Task<List<VolumePriceModel>> GetVolumePricesAsync(int id);
+    public Task<ProductResponse> GetDrinkAsync(int drinkId);
 }

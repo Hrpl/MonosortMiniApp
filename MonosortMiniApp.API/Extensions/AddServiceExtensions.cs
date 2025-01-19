@@ -62,6 +62,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IDessertService, DessertService>();
             services.AddScoped<IAdditiveService, AdditiveService>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IOrderService, OrderService>();
         }
     }
 }
