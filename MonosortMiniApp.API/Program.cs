@@ -1,5 +1,6 @@
 using Microsoft.OpenApi.Models;
 using MonosortMiniApp.API.Extensions;
+using MonosortMiniApp.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddDataBase();
@@ -51,6 +52,8 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowAnyOrigin());
+
+app.UseMiddleware<ExepctionHandleMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
@@ -12,11 +14,13 @@ namespace MonosortMiniApp.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IOrderService _orderService;
+        private readonly IJwtHelper _jwtHelper;
 
-        public OrderController(IMapper mapper, IOrderService orderService)
+        public OrderController(IMapper mapper, IOrderService orderService, IJwtHelper jwtHelper)
         {
             _mapper = mapper;
             _orderService = orderService;
+            _jwtHelper = jwtHelper;
         }
 
         // GET: api/<OrderController>
@@ -27,19 +31,32 @@ namespace MonosortMiniApp.API.Controllers
         }
 
         // POST api/<OrderController>
+        [Authorize]
         [HttpPost]
-        public async void Post([FromBody] OrderRequest request)
+        public async Task<ActionResult> Post([FromBody] OrderRequest request)
         {
             try
             {
-                var order = _mapper.Map<OrderModel>(request);
+                var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
 
-                await _orderService.CreateOrderAsync(order);
+                if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+                {
+                    var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+                    var id = await _jwtHelper.DecodJwt(token);
+
+
+                    var order = _mapper.Map<OrderModel>(request);
+                    order.WaitingTime = 0;
+                    order.UserId = id;
+
+                    await _orderService.CreateOrderAsync(order, request.Positions);
+                    return Ok();
+                }
+                else return Unauthorized();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return BadRequest(ex.Message);
             }
         }
     }

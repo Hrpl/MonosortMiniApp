@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace MonosortMiniApp.Domain.Models;
 
-public class PositionModel
+public class SiropPositionModel
 {
-    public int OrderId { get; set; }
-    public int DrinkId { get; set; }
-    public int VolumeId { get; set; }
-    public int SugarCount { get; set; }
-    public int MilkId { get; set; }
-    public bool ExtraShot { get; set; }
-    public int Price { get; set; }
+    public int SiropId { get; set; }
+    public int PositionId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public bool IsDeleted { get; set; } = false;

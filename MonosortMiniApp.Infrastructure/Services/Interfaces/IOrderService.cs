@@ -1,4 +1,5 @@
-﻿using MonosortMiniApp.Domain.Models;
+﻿using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,5 @@ namespace MonosortMiniApp.Infrastructure.Services.Interfaces;
 
 public interface IOrderService
 {
-    public Task CreateOrderAsync(OrderModel model);
-    public Task CreatePositionsAsync(List<PositionModel> positionModels);
+    public Task CreateOrderAsync(OrderModel model, List<PositionRequest> positions);
 }

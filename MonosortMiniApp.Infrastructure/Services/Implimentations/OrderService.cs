@@ -1,28 +1,53 @@
-﻿using MonosortMiniApp.Domain.Models;
+﻿using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using IMapper = MapsterMapper.IMapper;
 
 namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 
 public class OrderService : IOrderService
 {
-    private readonly QueryFactory _queryFactory;
-    public OrderService(IDbConnectionManager dbConnection)
+    private readonly QueryFactory _query;
+    private readonly IMapper _mapper;
+    public OrderService(IDbConnectionManager query, IMapper mapper)
     {
-        _queryFactory = dbConnection.PostgresQueryFactory;
+        _query = query.PostgresQueryFactory;
+        _mapper = mapper;
     }
-    public Task CreateOrderAsync(OrderModel model)
+    public async Task CreateOrderAsync(OrderModel model, List<PositionRequest> positions)
     {
-        throw new NotImplementedException();
-    }
+        try
+        {
+            var qid = _query.Query("dictionary.Orders")
+            .InsertGetId<int>(model);
+            if(qid != 0)
+            {
+                foreach (var position in positions)
+                {
+                    var positionModel = _mapper.Map<PositionModel>(position);
 
-    public Task CreatePositionsAsync(List<PositionModel> positionModels)
-    {
-        throw new NotImplementedException();
+                    positionModel.OrderId = qid;
+                    var pid = _query.Query("dictionary.Positions").InsertGetId<int>(positionModel);
+
+                    foreach (var sirop in position.Sirops)
+                    {
+                        var siropPosition = new SiropPositionModel { SiropId = sirop, PositionId = pid };
+                        await _query.Query("dictionary.SiropsPosition").InsertAsync(siropPosition);
+                    }
+                }
+            }
+            else
+            {
+                //todo
+                throw new Exception("Ошибка в создании заказа");
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+        
     }
 }
