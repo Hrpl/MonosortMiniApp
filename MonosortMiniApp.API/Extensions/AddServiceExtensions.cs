@@ -6,6 +6,7 @@ using MonosortMiniApp.API.Services.Implementations;
 using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.Options;
 using MonosortMiniApp.Domain.Models;
+using MonosortMiniApp.Infrastructure.Hubs;
 using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -63,6 +64,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IAdditiveService, AdditiveService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<OrderHub>();
         }
     }
 }
