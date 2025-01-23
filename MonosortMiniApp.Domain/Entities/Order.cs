@@ -9,5 +9,5 @@ public class Order : BaseEntity
     public int UserId { get; set; }
     public int WaitingTime { get; set; }
     public int SummaryPrice { get; set; }
-    public string? Status {  get; set; }
+    public int Status {  get; set; }
 }

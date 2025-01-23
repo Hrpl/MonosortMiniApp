@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Hubs;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
@@ -20,6 +21,7 @@ public class OrderService : IOrderService
         _mapper = mapper;
         _hubContext = hubContext;
     }
+
     public async Task CreateOrderAsync(OrderModel model, List<PositionRequest> positions)
     {
         try
@@ -55,5 +57,24 @@ public class OrderService : IOrderService
             throw new Exception(ex.Message);
         }
         
+    }
+
+    public async Task<IEnumerable<GetAllOrders>> GetAllOrders()
+    {
+        var query = _query.Query("dictionary.Orders")
+            .Select("Id",
+            "CreatedAt");
+
+        var result = await _query.GetAsync<GetAllOrders>(query);
+
+        return result.ToList();
+    }
+
+    public void UpdateStatusAsync(int status, int id)
+    {
+        _query.Query("dictionary.Orders").Where("Id", id).Update(new
+        {
+            Status = status
+        });
     }
 }

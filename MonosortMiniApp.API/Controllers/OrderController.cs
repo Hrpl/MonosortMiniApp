@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 
@@ -23,14 +24,40 @@ namespace MonosortMiniApp.API.Controllers
             _jwtHelper = jwtHelper;
         }
 
-        // GET: api/<OrderController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                var result = await _orderService.GetAllOrders();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ошибка получения заказов: {ex.Message}");
+            }
         }
 
-        // POST api/<OrderController>
+        [HttpGet("{id}")]
+        public Task<ActionResult<OrderModel>> GetOne([FromRoute] int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPatch("status")]
+        public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
+        {
+            try
+            {
+                _orderService.UpdateStatusAsync(status, id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ошибка обновления статуса: {ex.Message}");
+            }
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] OrderRequest request)
@@ -48,7 +75,7 @@ namespace MonosortMiniApp.API.Controllers
                     var order = _mapper.Map<OrderModel>(request);
                     order.WaitingTime = 0;
                     order.UserId = id;
-                    order.Status = "Создан";
+                    order.Status = 1;
 
                     await _orderService.CreateOrderAsync(order, request.Positions);
                     return Ok();

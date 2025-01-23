@@ -1,7 +1,6 @@
 using Microsoft.OpenApi.Models;
 using MonosortMiniApp.API.Extensions;
 using MonosortMiniApp.API.Middleware;
-using MonosortMiniApp.Infrastructure.Hub;
 using MonosortMiniApp.Infrastructure.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);

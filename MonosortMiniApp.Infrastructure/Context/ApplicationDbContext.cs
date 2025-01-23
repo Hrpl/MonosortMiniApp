@@ -21,6 +21,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<Position> Positions { get; set; }
     public DbSet<SiropPosition> SiropsPosition { get; set; }
+    public DbSet<OrderStatus> OrderStatus { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
         Database.Migrate();
