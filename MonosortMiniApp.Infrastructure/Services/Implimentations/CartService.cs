@@ -36,7 +36,7 @@ public class CartService : ICartService
          await _query.Query("dictionary.Cart").InsertAsync(model);
     }
 
-    public async Task DeleteCartItemAsync(int userId, int cartItemId)
+    public async Task DeleteCartItemAsync(int cartItemId)
     {
         var query = _query.Query("dictionary.CartItem").Where("Id", cartItemId).AsDelete();
 

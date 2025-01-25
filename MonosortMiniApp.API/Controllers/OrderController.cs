@@ -6,86 +6,84 @@ using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 
+namespace MonosortMiniApp.API.Controllers;
 
-namespace MonosortMiniApp.API.Controllers
+[Route("api/order")]
+[ApiController]
+public class OrderController : ControllerBase
 {
-    [Route("api/order")]
-    [ApiController]
-    public class OrderController : ControllerBase
+    private readonly IMapper _mapper;
+    private readonly IOrderService _orderService;
+    private readonly IJwtHelper _jwtHelper;
+
+    public OrderController(IMapper mapper, IOrderService orderService, IJwtHelper jwtHelper)
     {
-        private readonly IMapper _mapper;
-        private readonly IOrderService _orderService;
-        private readonly IJwtHelper _jwtHelper;
+        _mapper = mapper;
+        _orderService = orderService;
+        _jwtHelper = jwtHelper;
+    }
 
-        public OrderController(IMapper mapper, IOrderService orderService, IJwtHelper jwtHelper)
+    [HttpGet("all")]
+    public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
+    {
+        try
         {
-            _mapper = mapper;
-            _orderService = orderService;
-            _jwtHelper = jwtHelper;
+            var result = await _orderService.GetAllOrders();
+            return Ok(result);
         }
-
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
+        catch (Exception ex)
         {
-            try
-            {
-                var result = await _orderService.GetAllOrders();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Ошибка получения заказов: {ex.Message}");
-            }
+            return BadRequest($"Ошибка получения заказов: {ex.Message}");
         }
+    }
 
-        [HttpGet("{id}")]
-        public Task<ActionResult<OrderModel>> GetOne([FromRoute] int id)
+    [HttpGet("{id}")]
+    public Task<ActionResult<OrderModel>> GetOne([FromRoute] int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPatch("status")]
+    public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
+    {
+        try
         {
-            throw new NotImplementedException();
+            _orderService.UpdateStatusAsync(status, id);
+            return Ok();
         }
-
-        [HttpPatch("status")]
-        public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
+        catch (Exception ex)
         {
-            try
+            return BadRequest($"Ошибка обновления статуса: {ex.Message}");
+        }
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult> Post([FromBody] OrderRequest request)
+    {
+        try
+        {
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+
+            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
             {
-                _orderService.UpdateStatusAsync(status, id);
+                var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+                var id = await _jwtHelper.DecodJwt(token);
+
+
+                var order = _mapper.Map<OrderModel>(request);
+                order.WaitingTime = 0;
+                order.UserId = id;
+                order.StatusId = 1;
+
+                await _orderService.CreateOrderAsync(order, request.Positions);
                 return Ok();
             }
-            catch (Exception ex)
-            {
-                return BadRequest($"Ошибка обновления статуса: {ex.Message}");
-            }
+            else return Unauthorized();
         }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] OrderRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-
-                if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
-                {
-                    var token = authorizationHeader.Substring("Bearer ".Length).Trim();
-                    var id = await _jwtHelper.DecodJwt(token);
-
-
-                    var order = _mapper.Map<OrderModel>(request);
-                    order.WaitingTime = 0;
-                    order.UserId = id;
-                    order.StatusId = 1;
-
-                    await _orderService.CreateOrderAsync(order, request.Positions);
-                    return Ok();
-                }
-                else return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(ex.Message);
         }
     }
 }

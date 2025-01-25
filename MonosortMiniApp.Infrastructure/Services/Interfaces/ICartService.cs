@@ -12,5 +12,5 @@ public interface ICartService
 {
     public Task CreateCartItemAsync(int userId, CartItemModel itemModel);
     public Task<List<CartItemResponse>> GetCartItemsAsync(int userId);
-    public Task DeleteCartItemAsync(int userId, int cartItemId);
+    public Task DeleteCartItemAsync(int cartItemId);
 }
