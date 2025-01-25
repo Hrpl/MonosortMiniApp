@@ -14,14 +14,15 @@ public class ApplicationDbContext : DbContext
     public DbSet<Additive> Milks { get; set; }
     public DbSet<TypeAdditive> Sirups { get; set; }
     public DbSet<Volume> Volumes { get; set; }
-    public DbSet<Dessert> Desserts { get; set; }
     public DbSet<Drink> Drinks { get; set; }
     public DbSet<Menu> Menu { get; set; }
     public DbSet<PriceDrink> PriceDrinks { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<Position> Positions { get; set; }
+    public DbSet<OrderItem> OrderItem { get; set; }
     public DbSet<SiropPosition> SiropsPosition { get; set; }
     public DbSet<OrderStatus> OrderStatus { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
         Database.Migrate();

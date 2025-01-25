@@ -12,7 +12,11 @@ namespace MonosortMiniApp.Domain.Entities;
 public class Drink : BaseEntity
 {
     public int MenuId { get; set; }
+    public Menu? Menu { get; set; }
     public string Name { get; set; }
     public bool IsExistence { get; set; } = true;
     public string Photo {  get; set; }
+    public List<PriceDrink> PriceDrinks { get; set; }
+    public List<OrderItem> OrderItems { get; set; }
+    public List<CartItem> CartItems { get; set; }
 }

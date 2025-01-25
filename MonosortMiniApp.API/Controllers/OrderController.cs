@@ -75,7 +75,7 @@ namespace MonosortMiniApp.API.Controllers
                     var order = _mapper.Map<OrderModel>(request);
                     order.WaitingTime = 0;
                     order.UserId = id;
-                    order.Status = 1;
+                    order.StatusId = 1;
 
                     await _orderService.CreateOrderAsync(order, request.Positions);
                     return Ok();

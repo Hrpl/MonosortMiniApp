@@ -6,6 +6,8 @@ namespace MonosortMiniApp.Domain.Entities;
 public class PriceDrink : BaseEntity
 {
     public int DrinkId { get; set; }
+    public Drink? Drink { get; set; }
     public int VolumeId { get; set; }
+    public Volume? Volume { get; set; }
     public int Price { get; set; }
 }

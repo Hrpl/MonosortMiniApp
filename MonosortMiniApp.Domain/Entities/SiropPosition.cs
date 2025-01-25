@@ -12,5 +12,6 @@ namespace MonosortMiniApp.Domain.Entities;
 public class SiropPosition : BaseEntity
 {
     public int SiropId { get; set; }
-    public int PositionId { get; set; }
+    public int OrderItemId { get; set; }
+    public OrderItem? OrderItem {  get; set; } 
 }

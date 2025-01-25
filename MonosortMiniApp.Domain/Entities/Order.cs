@@ -7,7 +7,10 @@ namespace MonosortMiniApp.Domain.Entities;
 public class Order : BaseEntity
 {
     public int UserId { get; set; }
+    public User? User { get; set; }  
     public int WaitingTime { get; set; }
     public int SummaryPrice { get; set; }
-    public int Status {  get; set; }
+    public int StatusId {  get; set; }
+    public OrderStatus? OrderStatus { get; set; }
+    public List<OrderItem> OrderItems { get; set; }
 }

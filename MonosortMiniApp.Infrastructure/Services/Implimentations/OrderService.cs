@@ -35,11 +35,11 @@ public class OrderService : IOrderService
                     var positionModel = _mapper.Map<PositionModel>(position);
 
                     positionModel.OrderId = qid;
-                    var pid = _query.Query("dictionary.Positions").InsertGetId<int>(positionModel);
+                    var pid = _query.Query("dictionary.OrderItem").InsertGetId<int>(positionModel);
 
                     foreach (var sirop in position.Sirops)
                     {
-                        var siropPosition = new SiropPositionModel { SiropId = sirop, PositionId = pid };
+                        var siropPosition = new SiropPositionModel { SiropId = sirop, OrderItemId = pid };
                         await _query.Query("dictionary.SiropsPosition").InsertAsync(siropPosition);
                     }
                 }
@@ -74,7 +74,7 @@ public class OrderService : IOrderService
     {
         _query.Query("dictionary.Orders").Where("Id", id).Update(new
         {
-            Status = status
+            StatusId = status
         });
     }
 }

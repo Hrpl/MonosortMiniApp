@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace MonosortMiniApp.Domain.Entities;
 
-[Table("Menu", Schema = EntityInformation.Dictionary.Scheme)]
-public class Menu : BaseEntity
+[Table("Cart", Schema = EntityInformation.Dictionary.Scheme)]
+public class Cart : BaseEntity
 {
-    public string Name { get; set; }
-    public List<Drink> Drinks { get; set; }
+    public int UserId { get; set; }
+    public User? User { get; set; }
+    public List<CartItem> CartItems { get; set; }
 }
