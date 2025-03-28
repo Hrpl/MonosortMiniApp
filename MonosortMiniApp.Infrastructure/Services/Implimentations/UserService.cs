@@ -10,7 +10,7 @@ namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 public class UserService : IUserService
 {
     private readonly QueryFactory _query;
-    private readonly string TableName = "public.Users";
+    private readonly string TableName = "dictionary.Users";
     public UserService(IDbConnectionManager connectionManager)
     {
         _query = connectionManager.PostgresQueryFactory;
