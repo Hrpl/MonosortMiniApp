@@ -51,7 +51,7 @@ public class CartController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-        
+
     }
 
     [HttpPost("create")]
@@ -97,6 +97,33 @@ public class CartController : ControllerBase
                 return Ok();
             }
             else return Unauthorized();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("all")]
+    [SwaggerOperation(Summary = "Удаление всех товаров из корзины. Необходим JWT")]
+    public async Task<ActionResult> DeleteAll()
+    {
+        try
+        {
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
+            }
+
+            await _cartService.DeleteAllCart(Convert.ToInt32(userId));
+            return Ok();
+
         }
         catch (Exception ex)
         {

@@ -1,4 +1,5 @@
 ﻿using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Entities;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using SqlKata.Execution;
@@ -58,5 +59,19 @@ public class CartService : ICartService
 
         var result = await _query.GetAsync<CartItemResponse>(query);
         return result.ToList();
+    }
+
+    public async Task DeleteAllCart(int userId)
+    {
+        var cartIdQuery = _query.Query("dictionary.Cart").Where("UserId").Select("Id");
+
+        var cartId = await _query.FirstOrDefaultAsync<int>(cartIdQuery);
+
+        if(cartId != 0)
+        {
+            var query = _query.Query("dictionary.CartItem").Where("CartId", cartId).AsDelete();
+
+            await _query.ExecuteAsync(query);
+        }
     }
 }
