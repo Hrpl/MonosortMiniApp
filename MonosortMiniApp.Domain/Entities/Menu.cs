@@ -12,5 +12,4 @@ namespace MonosortMiniApp.Domain.Entities;
 public class Menu : BaseEntity
 {
     public string Name { get; set; }
-    public List<Drink> Drinks { get; set; }
 }

@@ -37,12 +37,6 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
-    public Task<ActionResult<OrderModel>> GetOne([FromRoute] int id)
-    {
-        throw new NotImplementedException();
-    }
-
     [HttpPatch("status")]
     public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
     {

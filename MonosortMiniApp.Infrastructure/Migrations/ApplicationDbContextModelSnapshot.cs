@@ -58,8 +58,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TypeAdditiveId");
-
                     b.ToTable("Additive", "dictionary");
                 });
 
@@ -84,8 +82,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Cart", "dictionary");
                 });
@@ -130,12 +126,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("DrinkId");
-
-                    b.HasIndex("VolumeId");
-
                     b.ToTable("CartItem", "dictionary");
                 });
 
@@ -171,8 +161,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MenuId");
 
                     b.ToTable("Drinks", "dictionary");
                 });
@@ -217,12 +205,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("OrderStatusId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("SummaryPrice")
                         .HasColumnType("integer");
 
@@ -236,10 +218,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderStatusId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Orders", "dictionary");
                 });
@@ -283,12 +261,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DrinkId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("VolumeId");
 
                     b.ToTable("OrderItems", "dictionary");
                 });
@@ -347,10 +319,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DrinkId");
-
-                    b.HasIndex("VolumeId");
-
                     b.ToTable("PriceDrink", "dictionary");
                 });
 
@@ -378,8 +346,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderItemId");
 
                     b.ToTable("SiropsPosition", "dictionary");
                 });
@@ -471,195 +437,6 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Volumes", "dictionary");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Additive", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.TypeAdditive", "TypeAdditive")
-                        .WithMany("Additives")
-                        .HasForeignKey("TypeAdditiveId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TypeAdditive");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Cart", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.User", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.CartItem", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Drink", "Drink")
-                        .WithMany("CartItems")
-                        .HasForeignKey("DrinkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Volume", "Volume")
-                        .WithMany("CartItems")
-                        .HasForeignKey("VolumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Drink");
-
-                    b.Navigation("Volume");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Drink", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Menu", "Menu")
-                        .WithMany("Drinks")
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.OrderStatus", "OrderStatus")
-                        .WithMany("Orders")
-                        .HasForeignKey("OrderStatusId");
-
-                    b.HasOne("MonosortMiniApp.Domain.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderStatus");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.OrderItem", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Drink", "Drink")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("DrinkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Volume", "Volume")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("VolumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Drink");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Volume");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.PriceDrink", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Drink", "Drink")
-                        .WithMany("PriceDrinks")
-                        .HasForeignKey("DrinkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MonosortMiniApp.Domain.Entities.Volume", "Volume")
-                        .WithMany("PriceDrinks")
-                        .HasForeignKey("VolumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Drink");
-
-                    b.Navigation("Volume");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.SiropPosition", b =>
-                {
-                    b.HasOne("MonosortMiniApp.Domain.Entities.OrderItem", "OrderItem")
-                        .WithMany("SiropPositions")
-                        .HasForeignKey("OrderItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderItem");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Cart", b =>
-                {
-                    b.Navigation("CartItems");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Drink", b =>
-                {
-                    b.Navigation("CartItems");
-
-                    b.Navigation("OrderItems");
-
-                    b.Navigation("PriceDrinks");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Menu", b =>
-                {
-                    b.Navigation("Drinks");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.OrderItem", b =>
-                {
-                    b.Navigation("SiropPositions");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.OrderStatus", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.TypeAdditive", b =>
-                {
-                    b.Navigation("Additives");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.User", b =>
-                {
-                    b.Navigation("Carts");
-
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Volume", b =>
-                {
-                    b.Navigation("CartItems");
-
-                    b.Navigation("OrderItems");
-
-                    b.Navigation("PriceDrinks");
                 });
 #pragma warning restore 612, 618
         }

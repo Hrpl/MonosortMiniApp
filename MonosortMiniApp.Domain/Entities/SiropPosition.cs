@@ -13,5 +13,4 @@ public class SiropPosition : BaseEntity
 {
     public int SiropId { get; set; }
     public int OrderItemId { get; set; }
-    public OrderItem? OrderItem {  get; set; } 
 }

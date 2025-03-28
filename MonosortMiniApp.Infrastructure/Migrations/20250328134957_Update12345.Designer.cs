@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MonosortMiniApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250106150312_AddPrice")]
-    partial class AddPrice
+    [Migration("20250328134957_Update12345")]
+    partial class Update12345
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Coffee", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Additive", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,7 +46,14 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Photo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TypeAdditiveId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -54,10 +61,10 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coffees", "dictionary");
+                    b.ToTable("Additive", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Dessert", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Cart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,32 +75,21 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<bool>("IsExistence")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Desserts", "dictionary");
+                    b.ToTable("Cart", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Limonades", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.CartItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,31 +97,42 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CartId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DrinkId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("ExtraShot")
+                        .HasColumnType("boolean");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsExistence")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("MilkId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SugarCount")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("VolumeId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Limonades", "dictionary");
+                    b.ToTable("CartItem", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Milk", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Drink", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,22 +149,26 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool>("IsExistence")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("MenuId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
+                    b.Property<string>("Photo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Milks", "dictionary");
+                    b.ToTable("Drinks", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Sirup", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Menu", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -171,25 +182,19 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsExistence")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sirups", "dictionary");
+                    b.ToTable("Menu", "dictionary");
                 });
 
-            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Tea", b =>
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -203,12 +208,108 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsExistence")
+                    b.Property<int>("SummaryPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WaitingTime")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders", "dictionary");
+                });
+
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DrinkId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("ExtraShot")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MilkId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SugarCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("VolumeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderItems", "dictionary");
+                });
+
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatus", "dictionary");
+                });
+
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.PriceDrink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DrinkId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Price")
                         .HasColumnType("integer");
@@ -216,9 +317,66 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("VolumeId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Tea", "dictionary");
+                    b.ToTable("PriceDrink", "dictionary");
+                });
+
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.SiropPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SiropId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiropsPosition", "dictionary");
+                });
+
+            modelBuilder.Entity("MonosortMiniApp.Domain.Entities.TypeAdditive", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TypeAdditive", "dictionary");
                 });
 
             modelBuilder.Entity("MonosortMiniApp.Domain.Entities.User", b =>
@@ -251,7 +409,7 @@ namespace MonosortMiniApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("User", "dictionary");
                 });
 
             modelBuilder.Entity("MonosortMiniApp.Domain.Entities.Volume", b =>
@@ -268,15 +426,13 @@ namespace MonosortMiniApp.Infrastructure.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsExistence")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

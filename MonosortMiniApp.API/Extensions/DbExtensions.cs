@@ -9,7 +9,7 @@ public static class DbExtensions
     {
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(
-            builder.Configuration["ConnectionString:DefaultConnection"],
+            "Host=85.208.87.10;Port=5432;Database=MonosortMiniApp;Username=postgres;Password=2208;",
             o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
         ));
 

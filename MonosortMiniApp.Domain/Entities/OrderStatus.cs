@@ -8,5 +8,4 @@ namespace MonosortMiniApp.Domain.Entities;
 public class OrderStatus : BaseEntity
 {
     public string Name { get; set; }
-    public List<Order> Orders { get; set; }
 }

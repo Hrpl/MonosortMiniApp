@@ -13,7 +13,4 @@ public class Volume : BaseEntity
 {
     public string Name { get; set; }
     public string Size { get; set; }
-    public List<PriceDrink> PriceDrinks { get; set; }
-    public List<OrderItem> OrderItems { get; set; }
-    public List<CartItem> CartItems { get; set; }
 }
