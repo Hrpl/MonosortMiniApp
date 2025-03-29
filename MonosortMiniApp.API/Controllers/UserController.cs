@@ -54,7 +54,7 @@ public class UserController : ControllerBase
 
     // POST api/<UserController>
     [HttpPost("create")]
-    public async Task<ActionResult> Create([FromBody] LoginRequest req)
+    public async Task<ActionResult> Create([FromBody] CreateUserRequest req)
     {
         if (req.Login == "") throw new Exception("Поле Login не заполнено");
 

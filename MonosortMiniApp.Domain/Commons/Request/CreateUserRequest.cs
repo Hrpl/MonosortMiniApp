@@ -4,14 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MonosortMiniApp.Domain.Models;
+namespace MonosortMiniApp.Domain.Commons.Request;
 
-public class UserModel
+public class CreateUserRequest
 {
     public string Name { get; set; }
     public string Login { get; set; }
     public string Password { get; set; }
-    public bool IsConfirmed { get; set; }
-    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
 }

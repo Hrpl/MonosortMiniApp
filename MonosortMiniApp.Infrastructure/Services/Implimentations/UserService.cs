@@ -47,6 +47,7 @@ public class UserService : IUserService
         var query = _query.Query(TableName)
             .Where("Login", login)
             .Select("Login",
+            "Name",
             "Password",
             "IsConfirmed",
             "CreatedAt",
