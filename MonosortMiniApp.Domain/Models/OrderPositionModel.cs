@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace MonosortMiniApp.Domain.Models;
 
-public class PositionModel
+public class OrderPositionModel
 {
     public int OrderId { get; set; }
     public int DrinkId { get; set; }
     public int VolumeId { get; set; }
     public int SugarCount { get; set; }
+    public int SiropId { get; set; }
     public int MilkId { get; set; }
     public bool ExtraShot { get; set; }
     public int Price { get; set; }

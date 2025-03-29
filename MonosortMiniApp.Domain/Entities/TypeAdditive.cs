@@ -12,5 +12,6 @@ namespace MonosortMiniApp.Domain.Entities;
 public class TypeAdditive : BaseEntity
 {
     public string Name { get; set; }
+    public string Photo { get; set; }
 
 }

@@ -19,7 +19,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<PriceDrink> PriceDrinks { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItem { get; set; }
-    public DbSet<SiropPosition> SiropsPosition { get; set; }
     public DbSet<OrderStatus> OrderStatus { get; set; }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }

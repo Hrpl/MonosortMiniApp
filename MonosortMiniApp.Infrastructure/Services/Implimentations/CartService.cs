@@ -20,16 +20,24 @@ public class CartService : ICartService
             .Where("UserId", userId)
             .Select("Id");
 
-        var cartId = await _query.FirstOrDefaultAsync<int>(cartIdQuery);
+        int cartId = await _query.FirstOrDefaultAsync<int>(cartIdQuery);
         if(cartId == 0)
         {
             var cartModel = new CartModel() { UserId = userId};
             await this.CreateCartAsync(cartModel);
+            cartId = await GetIdCartAsync(userId);
         }
 
         itemModel.CartId = cartId;
 
         await _query.Query("dictionary.CartItem").InsertAsync(itemModel);
+    }
+
+    public async Task<int> GetIdCartAsync(int userId)
+    {
+        var cartIdQuery = _query.Query("dictionary.Cart").Where("UserId", userId).Select("Id");
+
+        return await _query.FirstOrDefaultAsync<int>(cartIdQuery);
     }
 
     public async Task CreateCartAsync(CartModel model)
@@ -52,6 +60,7 @@ public class CartService : ICartService
             .Select("ci.Id",
             "ci.DrinkId",
             "ci.VolumeId",
+            "ci.SiropId",
             "ci.SugarCount",
             "ci.MilkId",
             "ci.ExtraShot",
@@ -63,11 +72,8 @@ public class CartService : ICartService
 
     public async Task DeleteAllCart(int userId)
     {
-        var cartIdQuery = _query.Query("dictionary.Cart").Where("UserId").Select("Id");
-
-        var cartId = await _query.FirstOrDefaultAsync<int>(cartIdQuery);
-
-        if(cartId != 0)
+        var cartId = await GetIdCartAsync(userId);
+        if (cartId != 0)
         {
             var query = _query.Query("dictionary.CartItem").Where("CartId", cartId).AsDelete();
 

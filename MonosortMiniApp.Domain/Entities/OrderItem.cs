@@ -14,6 +14,7 @@ public class OrderItem : BaseEntity
     public int OrderId { get; set; }
     public int DrinkId { get; set; }
     public int VolumeId { get; set; }
+    public int SiropId { get; set; }
     public int SugarCount { get; set; }
     public int MilkId { get; set; }
     public bool ExtraShot { get; set; }

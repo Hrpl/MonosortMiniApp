@@ -26,13 +26,13 @@ public class OrderService : IOrderService
     {
         try
         {
-            var qid = _query.Query("dictionary.Orders")
+            /*var qid = _query.Query("dictionary.Orders")
             .InsertGetId<int>(model);
             if(qid != 0)
             {
                 foreach (var position in positions)
                 {
-                    var positionModel = _mapper.Map<PositionModel>(position);
+                    var positionModel = _mapper.Map<OrderPositionModel>(position);
 
                     positionModel.OrderId = qid;
                     var pid = _query.Query("dictionary.OrderItem").InsertGetId<int>(positionModel);
@@ -50,7 +50,7 @@ public class OrderService : IOrderService
                 throw new Exception("Ошибка в создании заказа");
             }
 
-            await _hubContext.Clients.All.SendAsync("NewOrder", qid);
+            await _hubContext.Clients.All.SendAsync("NewOrder", qid);*/
         }
         catch (Exception ex)
         {
