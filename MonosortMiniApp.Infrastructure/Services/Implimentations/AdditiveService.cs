@@ -31,14 +31,21 @@ public class AdditiveService : IAdditiveService
         return result.ToList();
     }
 
-    public async Task<List<GetTypeAdditive>> GetTypeAdditiveAsync()
+    public async Task<List<GetTypeAdditive>> GetTypeAdditiveAsync(int drinkId)
     {
-        var query = _query.Query("dictionary.TypeAdditive")
+        var queryDrinks = _query.Query("dictionary.Drinks")
+            .Where("Id", drinkId)
+            .Select("MenuId");
+
+        var menuId = await _query.FirstOrDefaultAsync<int>(queryDrinks);
+
+        var queryTA = _query.Query("dictionary.TypeAdditive")
+            .When(drinkId != 1, q => q.WhereNotLike("Name", "%Эспрессо%"))
             .Select("Id",
             "Name",
             "Photo");
 
-        var result = await _query.GetAsync<GetTypeAdditive>(query);
+        var result = await _query.GetAsync<GetTypeAdditive>(queryTA);
         return result.ToList();
     }
 }

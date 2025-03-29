@@ -11,5 +11,5 @@ public interface IAdditiveService
 {
     public Task<List<AdditiveModel>> GetManyAdditiveAsync(int typeId);
 
-    public Task<List<GetTypeAdditive>> GetTypeAdditiveAsync();
+    public Task<List<GetTypeAdditive>> GetTypeAdditiveAsync(int drinkId);
 }

@@ -24,9 +24,9 @@ namespace MonosortMiniApp.API.Controllers
         }
 
         [HttpGet("type")]
-        public async Task<ActionResult<List<AdditiveModel>>> GetTypeAdditive()
+        public async Task<ActionResult<List<AdditiveModel>>> GetTypeAdditive([FromQuery] int drinkId)
         {
-            var response = await _additiveService.GetTypeAdditiveAsync();
+            var response = await _additiveService.GetTypeAdditiveAsync(drinkId);
 
             if (response != null) return Ok(response);
             else return BadRequest();
