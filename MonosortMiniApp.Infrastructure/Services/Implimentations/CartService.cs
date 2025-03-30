@@ -56,9 +56,9 @@ public class CartService : ICartService
     {
         var query = _query.Query("dictionary.Cart as c")
             .Where("c.UserId", userId)
-            .LeftJoin("dictionary.CartItem as ci", "ci.CartId", "c.Id")
-            .LeftJoin("dictionary.Drinks as d", "d.Id", "ci.DrinkId")
-            .LeftJoin("dictionary.Volumes as v", "v.Id", "ci.VolumeId")
+            .Join("dictionary.CartItem as ci", "ci.CartId", "c.Id")
+            .Join("dictionary.Drinks as d", "d.Id", "ci.DrinkId")
+            .Join("dictionary.Volumes as v", "v.Id", "ci.VolumeId")
             .Select("ci.Id",
             "d.Photo",
             "d.Name",
