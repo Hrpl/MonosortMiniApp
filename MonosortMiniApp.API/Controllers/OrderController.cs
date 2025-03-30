@@ -28,7 +28,18 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var result = await _orderService.GetAllOrders();
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
+            }
+
+            var result = await _orderService.GetAllOrders(Convert.ToInt32(userId));
             return Ok(result);
         }
         catch (Exception ex)

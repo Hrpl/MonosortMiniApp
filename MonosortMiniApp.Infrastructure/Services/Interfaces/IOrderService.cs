@@ -1,5 +1,6 @@
 ﻿using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Entities;
 using MonosortMiniApp.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,5 @@ public interface IOrderService
 {
     public Task CreateOrderAsync(OrderModel model, List<PositionRequest> positions);
     public void UpdateStatusAsync(int status, int id);
-    public Task<IEnumerable<GetAllOrders>> GetAllOrders();
+    public Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId);
 }

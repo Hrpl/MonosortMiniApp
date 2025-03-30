@@ -26,9 +26,9 @@ public class OrderService : IOrderService
     {
         try
         {
-            /*var qid = _query.Query("dictionary.Orders")
+            var qid = _query.Query("dictionary.Orders")
             .InsertGetId<int>(model);
-            if(qid != 0)
+            /*if(qid != 0)
             {
                 foreach (var position in positions)
                 {
@@ -59,11 +59,13 @@ public class OrderService : IOrderService
         
     }
 
-    public async Task<IEnumerable<GetAllOrders>> GetAllOrders()
+    public async Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId)
     {
-        var query = _query.Query("dictionary.Orders")
-            .Select("Id",
-            "CreatedAt");
+        var query = _query.Query("dictionary.Orders as o")
+            .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
+            .Where("o.UserId", userId)
+            .Select("o.Id",
+            "os.Status");
 
         var result = await _query.GetAsync<GetAllOrders>(query);
 
@@ -72,9 +74,21 @@ public class OrderService : IOrderService
 
     public void UpdateStatusAsync(int status, int id)
     {
-        _query.Query("dictionary.Orders").Where("Id", id).Update(new
+        if(status == 2) 
         {
-            StatusId = status
-        });
+            _query.Query("dictionary.Orders").Where("Id", id).Update(new
+            {
+                StatusId = status,
+                UpdatedAt = DateTime.UtcNow
+            });
+        }
+        else
+        {
+            _query.Query("dictionary.Orders").Where("Id", id).Update(new
+            {
+                StatusId = status,
+                UpdatedAt = DateTime.UtcNow
+            });
+        }
     }
 }

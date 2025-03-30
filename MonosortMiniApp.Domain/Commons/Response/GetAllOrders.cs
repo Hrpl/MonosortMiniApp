@@ -9,5 +9,5 @@ namespace MonosortMiniApp.Domain.Commons.Response;
 public class GetAllOrders
 {
     public string Id { get; set; }
-    public string CreatedAt { get; set; }
+    public string Status { get; set; }
 }
