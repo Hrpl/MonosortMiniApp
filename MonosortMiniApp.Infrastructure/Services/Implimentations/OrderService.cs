@@ -86,8 +86,7 @@ public class OrderService : IOrderService
         {
             _query.Query("dictionary.Orders").Where("Id", id).Update(new
             {
-                StatusId = status,
-                UpdatedAt = DateTime.UtcNow
+                StatusId = status
             });
         }
     }

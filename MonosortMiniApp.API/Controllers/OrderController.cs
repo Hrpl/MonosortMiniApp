@@ -5,6 +5,7 @@ using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MonosortMiniApp.API.Controllers;
 
@@ -24,6 +25,8 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("all")]
+    [Authorize]
+    [SwaggerOperation(Summary = "Получени заказов пользователя. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
     {
         try
@@ -68,23 +71,26 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+            if (string.IsNullOrEmpty(userId))
             {
-                var token = authorizationHeader.Substring("Bearer ".Length).Trim();
-                var id = await _jwtHelper.DecodJwt(token);
-
-
-                var order = _mapper.Map<OrderModel>(request);
-                order.WaitingTime = 0;
-                order.UserId = id;
-                order.StatusId = 1;
-
-                await _orderService.CreateOrderAsync(order, request.Positions);
-                return Ok();
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
             }
-            else return Unauthorized();
+
+
+            var order = _mapper.Map<OrderModel>(request);
+            order.WaitingTime = 0;
+            order.UserId = Convert.ToInt32(userId);
+            order.StatusId = 1;
+
+            //await _orderService.CreateOrderAsync(order, request.Positions);
+            return Ok();
+
         }
         catch (Exception ex)
         {

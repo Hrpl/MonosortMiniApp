@@ -10,5 +10,5 @@ namespace MonosortMiniApp.Domain.Commons.Request;
 public class OrderRequest
 {
     public int SummaryPrice { get; set; }
-    public List<PositionRequest> Positions { get; set; }
+    public string Comment { get; set; }
 }

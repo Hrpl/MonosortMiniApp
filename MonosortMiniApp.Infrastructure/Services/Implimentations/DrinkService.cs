@@ -78,6 +78,7 @@ public class DrinkService : IDrinkService
             .Join("dictionary.Volumes as vl", "vl.Id", "pd.VolumeId")
             .Where("pd.DrinkId", id)
             .Select("pd.Price",
+            "vl.Id as VolumeId",
             "vl.Name",
             "vl.Size");
 
