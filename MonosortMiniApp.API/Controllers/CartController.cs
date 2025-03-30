@@ -34,24 +34,25 @@ public class CartController : ControllerBase
     {
         try
         {
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+            if (string.IsNullOrEmpty(userId))
             {
-                var token = authorizationHeader.Substring("Bearer ".Length).Trim();
-                var id = await _jwtHelper.DecodJwt(token);
-
-                var result = await _cartService.GetCartItemsAsync(id);
-                return Ok(result);
-
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
             }
-            else return Unauthorized();
+
+            var result = await _cartService.GetCartItemsAsync(Convert.ToInt32(userId));
+            return Ok(result);
+
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
-
     }
 
     [HttpPost("create")]
@@ -60,21 +61,23 @@ public class CartController : ControllerBase
     {
         try
         {
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+            if (string.IsNullOrEmpty(userId))
             {
-                var token = authorizationHeader.Substring("Bearer ".Length).Trim();
-                var id = await _jwtHelper.DecodJwt(token);
-
-                var model = _mapper.Map<CartItemModel>(request);
-
-                await _cartService.CreateCartItemAsync(id, model);
-
-                return Created();
-
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
             }
-            else return Unauthorized();
+
+            var model = _mapper.Map<CartItemModel>(request);
+
+            await _cartService.CreateCartItemAsync(Convert.ToInt32(userId), model);
+
+            return Created();
+
         }
         catch (Exception ex)
         {
@@ -89,14 +92,20 @@ public class CartController : ControllerBase
     {
         try
         {
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+            if (string.IsNullOrEmpty(userId))
             {
-                await _cartService.DeleteCartItemAsync(cartItemId);
-                return Ok();
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
             }
-            else return Unauthorized();
+
+            await _cartService.DeleteCartItemAsync(cartItemId);
+            return Ok();
+
         }
         catch (Exception ex)
         {

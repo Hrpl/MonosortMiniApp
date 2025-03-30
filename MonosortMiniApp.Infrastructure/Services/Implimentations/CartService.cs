@@ -56,14 +56,13 @@ public class CartService : ICartService
     {
         var query = _query.Query("dictionary.Cart as c")
             .Where("c.UserId", userId)
-            .Join("dictionary.CartItem as ci", "ci.CartId", "c.Id")
+            .LeftJoin("dictionary.CartItem as ci", "ci.CartId", "c.Id")
+            .LeftJoin("dictionary.Drinks as d", "d.Id", "ci.DrinkId")
+            .LeftJoin("dictionary.Volumes as v", "v.Id", "ci.VolumeId")
             .Select("ci.Id",
-            "ci.DrinkId",
-            "ci.VolumeId",
-            "ci.SiropId",
-            "ci.SugarCount",
-            "ci.MilkId",
-            "ci.ExtraShot",
+            "d.Photo",
+            "d.Name",
+            "v.Size as Volume",
             "ci.Price");
 
         var result = await _query.GetAsync<CartItemResponse>(query);

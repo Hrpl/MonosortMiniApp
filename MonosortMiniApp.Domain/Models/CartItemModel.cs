@@ -17,6 +17,7 @@ public class CartItemModel
     public int SiropId { get; set; }
     public bool ExtraShot { get; set; }
     public int Price { get; set; }
+    public int Sprinkling { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }
