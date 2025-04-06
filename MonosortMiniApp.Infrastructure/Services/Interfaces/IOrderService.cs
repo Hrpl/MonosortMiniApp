@@ -12,7 +12,7 @@ namespace MonosortMiniApp.Infrastructure.Services.Interfaces;
 
 public interface IOrderService
 {
-    public Task CreateOrderAsync(OrderModel model, List<PositionRequest> positions);
+    public Task CreateOrderAsync(OrderModel model);
     public void UpdateStatusAsync(int status, int id);
     public Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId);
 }

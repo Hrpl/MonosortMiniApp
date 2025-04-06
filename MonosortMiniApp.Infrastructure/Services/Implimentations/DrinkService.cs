@@ -81,7 +81,7 @@ public class DrinkService : IDrinkService
             "vl.Id as VolumeId",
             "vl.Name",
             "vl.Size");
-
+        
         var result = await _query.GetAsync<VolumePriceModel>(query);
 
         return result.ToList();

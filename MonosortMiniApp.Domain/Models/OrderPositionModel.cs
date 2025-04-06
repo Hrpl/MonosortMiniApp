@@ -15,8 +15,9 @@ public class OrderPositionModel
     public int SiropId { get; set; }
     public int MilkId { get; set; }
     public bool ExtraShot { get; set; }
+    public int Sprinkling { get; set; }
     public int Price { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
-    public bool IsDeleted { get; set; } = false;
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? UpdatedAt { get; set; } = DateTime.Now;
+    public bool? IsDeleted { get; set; } = false;
 }

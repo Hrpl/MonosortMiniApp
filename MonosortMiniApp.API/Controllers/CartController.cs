@@ -18,13 +18,11 @@ namespace MonosortMiniApp.API.Controllers;
 public class CartController : ControllerBase
 {
     private readonly ICartService _cartService;
-    private readonly IJwtHelper _jwtHelper;
     private readonly IMapper _mapper;
-    public CartController(ICartService cartService, IMapper mapper, IJwtHelper jwtHelper)
+    public CartController(ICartService cartService, IMapper mapper)
     {
         _cartService = cartService;
         _mapper = mapper;
-        _jwtHelper = jwtHelper;
     }
 
     // GET: api/<CartController>

@@ -22,41 +22,28 @@ public class OrderService : IOrderService
         _hubContext = hubContext;
     }
 
-    public async Task CreateOrderAsync(OrderModel model, List<PositionRequest> positions)
+    public async Task CreateOrderAsync(OrderModel model)
     {
         try
         {
+            var cartItems = await GetUserCartItemsAsync(model.UserId);
+
             var qid = _query.Query("dictionary.Orders")
             .InsertGetId<int>(model);
-            /*if(qid != 0)
-            {
-                foreach (var position in positions)
-                {
-                    var positionModel = _mapper.Map<OrderPositionModel>(position);
 
-                    positionModel.OrderId = qid;
-                    var pid = _query.Query("dictionary.OrderItem").InsertGetId<int>(positionModel);
-
-                    foreach (var sirop in position.Sirops)
-                    {
-                        var siropPosition = new SiropPositionModel { SiropId = sirop, OrderItemId = pid };
-                        await _query.Query("dictionary.SiropsPosition").InsertAsync(siropPosition);
-                    }
-                }
-            }
-            else
+            foreach (var position in cartItems)
             {
-                //todo
-                throw new Exception("Ошибка в создании заказа");
+                position.OrderId = qid;
             }
 
-            await _hubContext.Clients.All.SendAsync("NewOrder", qid);*/
+            await CreateOrderPositions(cartItems.ToList());
+
+            //todo: отправка в тг бота
         }
         catch (Exception ex)
         {
             throw new Exception(ex.Message);
         }
-        
     }
 
     public async Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId)
@@ -89,5 +76,32 @@ public class OrderService : IOrderService
                 StatusId = status
             });
         }
+    }
+
+    private async Task CreateOrderPositions(List<OrderPositionModel> models)
+    {
+        foreach (var model in models)
+        {
+             _query.Query("dictionary.OrderItems").Insert(model);
+        }
+    }
+
+    private async Task<IEnumerable<OrderPositionModel>> GetUserCartItemsAsync(int userId)
+    {
+        var cartItemsQuery = _query.Query("dictionary.Cart as c")
+                .Join("dictionary.CartItem as ci", "ci.CartId", "c.Id")
+                .Where("c.UserId", userId)
+                .Select("ci.DrinkId",
+                "ci.VolumeId",
+                "ci.SugarCount",
+                "ci.SiropId",
+                "ci.MilkId",
+                "ci.ExtraShot",
+                "ci.Price",
+                "ci.Sprinkling");
+
+        var cartItems = await _query.GetAsync<OrderPositionModel>(cartItemsQuery);
+
+        return cartItems;
     }
 }

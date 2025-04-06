@@ -15,13 +15,13 @@ public class OrderController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IOrderService _orderService;
-    private readonly IJwtHelper _jwtHelper;
+    private readonly ICartService _cartService;
 
-    public OrderController(IMapper mapper, IOrderService orderService, IJwtHelper jwtHelper)
+    public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService)
     {
         _mapper = mapper;
         _orderService = orderService;
-        _jwtHelper = jwtHelper;
+        _cartService = cartService;
     }
 
     [HttpGet("all")]
@@ -88,8 +88,10 @@ public class OrderController : ControllerBase
             order.UserId = Convert.ToInt32(userId);
             order.StatusId = 1;
 
-            //await _orderService.CreateOrderAsync(order, request.Positions);
-            return Ok();
+            await _orderService.CreateOrderAsync(order);
+
+            await _cartService.DeleteAllCart(Convert.ToInt32(userId));
+            return Created();
 
         }
         catch (Exception ex)
