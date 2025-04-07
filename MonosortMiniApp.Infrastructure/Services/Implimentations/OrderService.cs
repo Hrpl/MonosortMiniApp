@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Entities;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Hubs;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
@@ -22,7 +24,7 @@ public class OrderService : IOrderService
         _hubContext = hubContext;
     }
 
-    public async Task<List<OrderPositionModel>> CreateOrderAsync(OrderModel model)
+    public async Task<StatusOrderDTO> CreateOrderAsync(OrderModel model)
     {
         try
         {
@@ -37,8 +39,9 @@ public class OrderService : IOrderService
             }
 
             await CreateOrderPositions(cartItems.ToList());
+            var result = await GetStatusOrder(qid);
 
-            return cartItems.ToList();
+            return result;
         }
         catch (Exception ex)
         {
@@ -103,5 +106,18 @@ public class OrderService : IOrderService
         var cartItems = await _query.GetAsync<OrderPositionModel>(cartItemsQuery);
 
         return cartItems;
+    }
+
+    private async Task<StatusOrderDTO> GetStatusOrder(int orderId)
+    {
+        var query = _query.Query("dictionary.Orders as o")
+            .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
+            .Where("o.UserId", orderId)
+            .Select("o.Id as Number",
+            "os.Name as Status");
+
+        var result = await _query.FirstOrDefaultAsync<StatusOrderDTO>(query);
+
+        return result;
     }
 }

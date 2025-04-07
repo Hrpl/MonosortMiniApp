@@ -87,16 +87,17 @@ public class OrderController : ControllerBase
                 });
             }
 
-            var order = _mapper.Map<OrderModel>(request);
-            order.WaitingTime = 0;
-            order.UserId = Convert.ToInt32(userId);
-            order.StatusId = 1;
+            var orderModel = _mapper.Map<OrderModel>(request);
+            orderModel.WaitingTime = 0;
+            orderModel.UserId = Convert.ToInt32(userId);
+            orderModel.StatusId = 1;
 
-            var orderItem = await _orderService.CreateOrderAsync(order);
+            var orderStatus = await _orderService.CreateOrderAsync(orderModel);
 
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
 
-            await _hubContext.Clients.All.SendAsync("SendOrderId", orderItem);
+            await _hubContext.Clients.All.SendAsync("SendOrderId", orderStatus);
+
             return Created();
         }
         catch (Exception ex)
