@@ -21,11 +21,12 @@ public class OrderController : ControllerBase
     private readonly ICartService _cartService;
     private readonly IHubContext<OrderHub> _hubContext;
 
-    public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService)
+    public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService, IHubContext<OrderHub> hubContext)
     {
         _mapper = mapper;
         _orderService = orderService;
         _cartService = cartService;
+        _hubContext = hubContext;
     }
 
     [HttpGet("all")]
