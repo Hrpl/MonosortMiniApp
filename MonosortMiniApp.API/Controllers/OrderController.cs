@@ -96,7 +96,7 @@ public class OrderController : ControllerBase
 
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
 
-            await _hubContext.Clients.All.SendAsync("SendOrderId", new { Number = orderStatus.Number, Status = orderStatus.Status});
+            await _hubContext.Clients.All.SendAsync("SendOrderId", orderStatus);
 
             return Created();
         }
