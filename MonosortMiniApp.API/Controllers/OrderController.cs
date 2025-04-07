@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
+using MonosortMiniApp.Infrastructure.Hubs;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,6 +19,7 @@ public class OrderController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IOrderService _orderService;
     private readonly ICartService _cartService;
+    private readonly IHubContext<OrderHub> _hubContext;
 
     public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService)
     {
@@ -82,17 +86,17 @@ public class OrderController : ControllerBase
                 });
             }
 
-
             var order = _mapper.Map<OrderModel>(request);
             order.WaitingTime = 0;
             order.UserId = Convert.ToInt32(userId);
             order.StatusId = 1;
 
-            await _orderService.CreateOrderAsync(order);
+            var orderItem = await _orderService.CreateOrderAsync(order);
 
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
-            return Created();
 
+            await _hubContext.Clients.All.SendAsync("SendOrderId", orderItem);
+            return Created();
         }
         catch (Exception ex)
         {

@@ -12,7 +12,8 @@ namespace MonosortMiniApp.Infrastructure.Services.Interfaces;
 
 public interface IOrderService
 {
-    public Task CreateOrderAsync(OrderModel model);
+    public Task<List<OrderPositionModel>> CreateOrderAsync(OrderModel model);
     public void UpdateStatusAsync(int status, int id);
     public Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId);
+
 }

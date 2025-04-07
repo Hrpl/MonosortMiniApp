@@ -22,7 +22,7 @@ public class OrderService : IOrderService
         _hubContext = hubContext;
     }
 
-    public async Task CreateOrderAsync(OrderModel model)
+    public async Task<List<OrderPositionModel>> CreateOrderAsync(OrderModel model)
     {
         try
         {
@@ -38,7 +38,7 @@ public class OrderService : IOrderService
 
             await CreateOrderPositions(cartItems.ToList());
 
-            //todo: отправка в тг бота
+            return cartItems.ToList();
         }
         catch (Exception ex)
         {

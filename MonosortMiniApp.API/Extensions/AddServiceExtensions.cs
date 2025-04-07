@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using MonosortMiniApp.API.Services.Implementations;
 using MonosortMiniApp.API.Services.Interfaces;
@@ -65,7 +66,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICartService, CartService>();
-            services.AddScoped<OrderHub>();
+            services.AddScoped<IHubContext<OrderHub>>();
         }
     }
 }
