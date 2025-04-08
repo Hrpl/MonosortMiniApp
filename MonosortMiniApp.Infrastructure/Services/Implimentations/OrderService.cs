@@ -106,7 +106,7 @@ public class OrderService : IOrderService
     public async Task<IEnumerable<StatusOrderDTO>> GetStatusOrder()
     {
         var query = _query.Query("dictionary.Orders as o")
-            .Where("o.CreatedAt", ">=", DateTime.Now)
+            .Where("o.CreatedAt", ">=", DateTime.Now.AddDays(-1))
             .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
             .Select("o.Id as Number",
             "o.SummaryPrice as Price",
