@@ -103,7 +103,7 @@ public class OrderService : IOrderService
         return cartItems;
     }
 
-    public async Task<StatusOrderDTO> GetStatusOrder()
+    public async Task<IEnumerable<StatusOrderDTO>> GetStatusOrder()
     {
         var query = _query.Query("dictionary.Orders as o")
             .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
@@ -111,7 +111,7 @@ public class OrderService : IOrderService
             "o.SummaryPrice as Price",
             "os.Name as Status");
 
-        var result = await _query.FirstOrDefaultAsync<StatusOrderDTO>(query);
+        var result = await _query.GetAsync<StatusOrderDTO>(query);
 
         return result;
     }
