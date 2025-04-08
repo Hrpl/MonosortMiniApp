@@ -14,14 +14,10 @@ namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 public class OrderService : IOrderService
 {
     private readonly QueryFactory _query;
-    private readonly IMapper _mapper;
-    private readonly IHubContext<OrderHub> _hubContext;
 
-    public OrderService(IDbConnectionManager query, IMapper mapper, IHubContext<OrderHub> hubContext)
+    public OrderService(IDbConnectionManager query)
     {
         _query = query.PostgresQueryFactory;
-        _mapper = mapper;
-        _hubContext = hubContext;
     }
 
     public async Task<StatusOrderDTO> CreateOrderAsync(OrderModel model)
@@ -119,5 +115,51 @@ public class OrderService : IOrderService
         var result = await _query.FirstOrDefaultAsync<StatusOrderDTO>(query);
 
         return result;
+    }
+
+    private async Task<OrderDescriptionResponse> GetOrderDescriptionAsync(int orderId)
+    {
+        var query = _query.Query("dictionary.Orders as o")
+            .LeftJoin("dictionary.OrderStatus as os", "o.StatusId", "os.Id")
+            .Where("o.Id", orderId)
+            .Select("o.WaitingTime as WaitingTime",
+            "os.Name as Status",
+            "o.SummaryPrice as SummaryPrice",
+            "o.Comment as Comment",
+            "o.CreatedAt as CreatedTime");
+
+        var result = await _query.FirstOrDefaultAsync<OrderDescriptionResponse>(query);
+        return result;
+    }
+
+    public async Task<OrderDescriptionResponse> GetOrderItemDescriptionsAsync(int orderId)
+    {
+        var orderDescription = await GetOrderDescriptionAsync(orderId);
+        var query = _query.Query("dictionary.OrderItems as oi")
+           .Where("oi.OrderId", orderId)
+
+           .LeftJoin("dictionary.Drinks as d", "oi.DrinkId", "d.Id")
+           .LeftJoin("dictionary.Volumes as v", "oi.VolumeId", "v.Id")
+
+           .LeftJoin("dictionary.Additive as Sirop", join => join.On("oi.SiropId", "Sirop.Id"))
+           .Select("Sirop.Name as SiropName")
+
+           .LeftJoin("dictionary.Additive as Milk", join => join.On("oi.MilkId", "Milk.Id"))
+           .Select("Milk.Name as MilkName")
+
+           .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("oi.Sprinkling", "Sprinkling.Id"))
+           .Select("Sprinkling.Name as Sprinkling")
+
+           .Select("d.Name as DrinkName",
+           "v.Size as VolumeName",
+           "oi.SugarCount as SugarCount",
+           "oi.ExtraShot as ExtraShot",
+           "oi.Price as Price");
+
+        var itemDescription = await _query.GetAsync<OrderItemDescriptionDTO>(query);
+
+        orderDescription.OrderItems = itemDescription;
+
+        return orderDescription;
     }
 }

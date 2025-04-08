@@ -33,7 +33,7 @@ public class OrderController : ControllerBase
 
     [HttpGet("all")]
     [Authorize]
-    [SwaggerOperation(Summary = "Получени заказов пользователя. Необходим JWT")]
+    [SwaggerOperation(Summary = "Получени заказов пользователя для Web. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
     {
         try
@@ -58,7 +58,23 @@ public class OrderController : ControllerBase
         }
     }
 
+    [HttpGet("description/{orderId}")]
+    [SwaggerOperation(Summary = "Получени описания заказа. Необходим JWT")]
+    public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetDescription([FromRoute] int orderId)
+    {
+        try
+        {
+            var result = await _orderService.GetOrderItemDescriptionsAsync(Convert.ToInt32(orderId));
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Ошибка получения заказов: {ex.Message}");
+        }
+    }
+
     [HttpPatch("status")]
+    [SwaggerOperation(Summary = "Изменение статуса заказа")]
     public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
     {
         try
@@ -74,6 +90,7 @@ public class OrderController : ControllerBase
 
     [Authorize]
     [HttpPost]
+    [SwaggerOperation(Summary = "Создание заказа")]
     public async Task<ActionResult> Post([FromBody] OrderRequest request)
     {
         try
