@@ -20,13 +20,15 @@ public class OrderController : ControllerBase
     private readonly IOrderService _orderService;
     private readonly ICartService _cartService;
     private readonly IHubContext<OrderHub> _hubContext;
+    private readonly ILogger<OrderController> _logger;
 
-    public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService, IHubContext<OrderHub> hubContext)
+    public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService, IHubContext<OrderHub> hubContext, ILogger<OrderController> logger)
     {
         _mapper = mapper;
         _orderService = orderService;
         _cartService = cartService;
         _hubContext = hubContext;
+        _logger = logger;
     }
 
     [HttpGet("all")]
@@ -93,7 +95,7 @@ public class OrderController : ControllerBase
             orderModel.StatusId = 1;
 
             var orderStatus = await _orderService.CreateOrderAsync(orderModel);
-
+            _logger.LogInformation($"Получены данные: номер {orderStatus.Number}, статус {orderStatus.Status}");
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
 
             await _hubContext.Clients.All.SendAsync("SendOrderId", orderStatus);
