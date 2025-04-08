@@ -20,7 +20,7 @@ public class OrderService : IOrderService
         _query = query.PostgresQueryFactory;
     }
 
-    public async Task<StatusOrderDTO> CreateOrderAsync(OrderModel model)
+    public async Task<int> CreateOrderAsync(OrderModel model)
     {
         try
         {
@@ -35,9 +35,8 @@ public class OrderService : IOrderService
             }
 
             await CreateOrderPositions(cartItems.ToList());
-            var result = await GetStatusOrder(qid);
 
-            return result;
+            return qid;
         }
         catch (Exception ex)
         {
@@ -104,11 +103,10 @@ public class OrderService : IOrderService
         return cartItems;
     }
 
-    private async Task<StatusOrderDTO> GetStatusOrder(int orderId)
+    public async Task<StatusOrderDTO> GetStatusOrder()
     {
         var query = _query.Query("dictionary.Orders as o")
             .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
-            .Where("o.Id", orderId)
             .Select("o.Id as Number",
             "o.SummaryPrice as Price",
             "os.Name as Status");
@@ -117,6 +115,7 @@ public class OrderService : IOrderService
 
         return result;
     }
+
 
     private async Task<OrderDescriptionResponse> GetOrderDescriptionAsync(int orderId)
     {

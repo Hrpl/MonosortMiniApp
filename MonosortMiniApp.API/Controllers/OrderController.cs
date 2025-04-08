@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
@@ -73,6 +74,21 @@ public class OrderController : ControllerBase
         }
     }
 
+    [HttpGet("status")]
+    [SwaggerOperation(Summary = "Получени закозов в ТГ Bote. Необходим JWT")]
+    public async Task<ActionResult<IEnumerable<StatusOrderDTO>>> GetStatusOrder()
+    {
+        try
+        {
+            var result = await _orderService.GetStatusOrder();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Ошибка получения заказов: {ex.Message}");
+        }
+    }
+
     [HttpPatch("status")]
     [SwaggerOperation(Summary = "Изменение статуса заказа")]
     public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
@@ -111,11 +127,11 @@ public class OrderController : ControllerBase
             orderModel.UserId = Convert.ToInt32(userId);
             orderModel.StatusId = 1;
 
-            var orderStatus = await _orderService.CreateOrderAsync(orderModel);
-            _logger.LogInformation($"Получены данные: номер {orderStatus.Number}, статус {orderStatus.Status}");
+            var orderId = await _orderService.CreateOrderAsync(orderModel);
+
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
 
-            await _hubContext.Clients.All.SendAsync("SendOrderId", orderStatus);
+            await _hubContext.Clients.All.SendAsync("SendOrderId", orderId, DateTime.UtcNow);
 
             return Created();
         }
