@@ -112,7 +112,7 @@ public class OrderService : IOrderService
     {
         var query = _query.Query("dictionary.Orders as o")
             .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
-            .Where("o.UserId", orderId)
+            .Where("o.Id", orderId)
             .Select("o.Id as Number",
             "os.Name as Status");
 
