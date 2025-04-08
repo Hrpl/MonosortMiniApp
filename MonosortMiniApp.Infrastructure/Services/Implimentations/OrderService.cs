@@ -110,6 +110,7 @@ public class OrderService : IOrderService
             .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
             .Where("o.Id", orderId)
             .Select("o.Id as Number",
+            "o.SummaryPrice as Price",
             "os.Name as Status");
 
         var result = await _query.FirstOrDefaultAsync<StatusOrderDTO>(query);
