@@ -163,4 +163,13 @@ public class OrderService : IOrderService
 
         return orderDescription;
     }
+
+    public void UpdateTimeAsync(int time, int orderId)
+    {
+        _query.Query("dictionary.Orders").Where("Id", orderId).Update(new
+        {
+            WaitingTime = time,
+            UpdatedAt = DateTime.UtcNow
+        });
+    }
 }

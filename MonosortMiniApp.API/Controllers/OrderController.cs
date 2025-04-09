@@ -96,7 +96,22 @@ public class OrderController : ControllerBase
         try
         {
             _orderService.UpdateStatusAsync(status, id);
-            return Ok();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Ошибка обновления статуса: {ex.Message}");
+        }
+    }
+
+    [HttpPatch("waitingTime")]
+    [SwaggerOperation(Summary = "Установка времени готовности заказа")]
+    public async Task<ActionResult> UpdateWaitingTime([FromQuery] int minuts, [FromQuery] int id)
+    {
+        try
+        {
+            _orderService.UpdateTimeAsync(minuts, id);
+            return NoContent();
         }
         catch (Exception ex)
         {

@@ -18,4 +18,5 @@ public interface IOrderService
     public Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId);
     public Task<OrderDescriptionResponse> GetOrderItemDescriptionsAsync(int orderId);
     public Task<IEnumerable<StatusOrderDTO>> GetStatusOrder();
+    public void UpdateTimeAsync(int time, int orderId);
 }
