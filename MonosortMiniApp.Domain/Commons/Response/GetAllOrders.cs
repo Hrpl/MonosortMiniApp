@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MonosortMiniApp.Domain.Commons.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,9 @@ namespace MonosortMiniApp.Domain.Commons.Response;
 
 public class GetAllOrders
 {
-    public string Id { get; set; }
-    public string Price { get; set; }
+    public int OrderId { get; set; }
+    public int SummaryPrice { get; set; }
     public string Status { get; set; }
+    public DateTime CreatedTime { get; set; }
+    public IEnumerable<OrderItemDescriptionDTO> OrderItems { get; set; }
 }

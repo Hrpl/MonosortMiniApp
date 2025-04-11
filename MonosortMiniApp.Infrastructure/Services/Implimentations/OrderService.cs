@@ -44,25 +44,23 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<IEnumerable<OrderDescriptionResponse>> GetAllOrders(int userId)
+    public async Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId)
     {
         var ordersQuery = _query.Query("dictionary.Orders as o")
         .LeftJoin("dictionary.OrderStatus as os", "o.StatusId", "os.Id")
         .Where("o.UserId", userId)
         .Select(
             "o.Id as OrderId",
-            "o.WaitingTime as WaitingTime",
             "os.Name as Status",
             "o.SummaryPrice as SummaryPrice",
-            "o.Comment as Comment",
             "o.CreatedAt as CreatedTime"
         )
         .OrderByDesc("o.CreatedAt");
 
-        var orders = await _query.GetAsync<OrderDescriptionResponse>(ordersQuery);
+        var orders = await _query.GetAsync<GetAllOrders>(ordersQuery);
 
         if (orders == null || !orders.Any())
-            return new List<OrderDescriptionResponse>();
+            return new List<GetAllOrders>();
 
         // Получаем все ID заказов для выборки позиций
         var orderIds = orders.Select(o => o.OrderId).ToList();
@@ -78,6 +76,7 @@ public class OrderService : IOrderService
             .Select(
                 "oi.OrderId as OrderId",
                 "d.Name as DrinkName",
+                "oi.Photo as Photo",
                 "v.Size as VolumeName",
                 "oi.SugarCount as SugarCount",
                 "oi.ExtraShot as ExtraShot",
