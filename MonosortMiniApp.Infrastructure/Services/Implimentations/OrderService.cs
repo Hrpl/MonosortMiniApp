@@ -77,7 +77,7 @@ public class OrderService : IOrderService
             .Select(
                 "oi.OrderId as OrderId",
                 "d.Name as DrinkName",
-                "oi.Photo as Photo",
+                "d.Photo as Photo",
                 "v.Size as VolumeName",
                 "oi.SugarCount as SugarCount",
                 "oi.ExtraShot as ExtraShot",
