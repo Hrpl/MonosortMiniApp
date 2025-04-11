@@ -44,17 +44,70 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId)
+    public async Task<IEnumerable<OrderDescriptionResponse>> GetAllOrders(int userId)
     {
-        var query = _query.Query("dictionary.Orders as o")
-            .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
-            .Where("o.UserId", userId)
-            .Select("o.Id",
-            "os.Status");
+        var ordersQuery = _query.Query("dictionary.Orders as o")
+        .LeftJoin("dictionary.OrderStatus as os", "o.StatusId", "os.Id")
+        .Where("o.UserId", userId)
+        .Select(
+            "o.Id as OrderId",
+            "o.WaitingTime as WaitingTime",
+            "os.Name as Status",
+            "o.SummaryPrice as SummaryPrice",
+            "o.Comment as Comment",
+            "o.CreatedAt as CreatedTime"
+        )
+        .OrderByDesc("o.CreatedAt");
 
-        var result = await _query.GetAsync<GetAllOrders>(query);
+        var orders = await _query.GetAsync<OrderDescriptionResponse>(ordersQuery);
 
-        return result.ToList();
+        if (orders == null || !orders.Any())
+            return new List<OrderDescriptionResponse>();
+
+        // Получаем все ID заказов для выборки позиций
+        var orderIds = orders.Select(o => o.OrderId).ToList();
+
+        // Запрос для получения всех позиций этих заказов
+        var itemsQuery = _query.Query("dictionary.OrderItems as oi")
+            .WhereIn("oi.OrderId", orderIds)
+            .LeftJoin("dictionary.Drinks as d", "oi.DrinkId", "d.Id")
+            .LeftJoin("dictionary.Volumes as v", "oi.VolumeId", "v.Id")
+            .LeftJoin("dictionary.Additive as Sirop", join => join.On("oi.SiropId", "Sirop.Id"))
+            .LeftJoin("dictionary.Additive as Milk", join => join.On("oi.MilkId", "Milk.Id"))
+            .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("oi.Sprinkling", "Sprinkling.Id"))
+            .Select(
+                "oi.OrderId as OrderId",
+                "d.Name as DrinkName",
+                "v.Size as VolumeName",
+                "oi.SugarCount as SugarCount",
+                "oi.ExtraShot as ExtraShot",
+                "oi.Price as Price",
+                "Sirop.Name as SiropName",
+                "Milk.Name as MilkName",
+                "Sprinkling.Name as Sprinkling"
+            );
+
+        var orderItems = await _query.GetAsync<OrderItemDescriptionDTO>(itemsQuery);
+
+        // Группируем позиции по заказам
+        var itemsGroupedByOrder = orderItems
+            .GroupBy(item => item.OrderId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        // Связываем заказы с их позициями
+        foreach (var order in orders)
+        {
+            if (itemsGroupedByOrder.TryGetValue(order.OrderId, out var items))
+            {
+                order.OrderItems = items;
+            }
+            else
+            {
+                order.OrderItems = new List<OrderItemDescriptionDTO>();
+            }
+        }
+
+        return orders;
     }
 
     public void UpdateStatusAsync(int status, int id)
@@ -117,49 +170,43 @@ public class OrderService : IOrderService
         return result;
     }
 
-
-    private async Task<OrderDescriptionResponse> GetOrderDescriptionAsync(int orderId)
+    public async Task<OrderDescriptionResponse> GetOrderItemDescriptionsAsync(int orderId)
     {
         var query = _query.Query("dictionary.Orders as o")
-            .LeftJoin("dictionary.OrderStatus as os", "o.StatusId", "os.Id")
-            .Where("o.Id", orderId)
-            .Select("o.WaitingTime as WaitingTime",
+        .LeftJoin("dictionary.OrderStatus as os", "o.StatusId", "os.Id")
+        .Where("o.Id", orderId)
+        .Select(
+            "o.WaitingTime as WaitingTime",
             "os.Name as Status",
             "o.SummaryPrice as SummaryPrice",
             "o.Comment as Comment",
-            "o.CreatedAt as CreatedTime");
+            "o.CreatedAt as CreatedTime"
+        );
 
-        var result = await _query.FirstOrDefaultAsync<OrderDescriptionResponse>(query);
-        return result;
-    }
+        var orderDescription = await _query.FirstOrDefaultAsync<OrderDescriptionResponse>(query);
 
-    public async Task<OrderDescriptionResponse> GetOrderItemDescriptionsAsync(int orderId)
-    {
-        var orderDescription = await GetOrderDescriptionAsync(orderId);
-        var query = _query.Query("dictionary.OrderItems as oi")
-           .Where("oi.OrderId", orderId)
+        if (orderDescription == null)
+            return null;
 
-           .LeftJoin("dictionary.Drinks as d", "oi.DrinkId", "d.Id")
-           .LeftJoin("dictionary.Volumes as v", "oi.VolumeId", "v.Id")
+        var itemsQuery = _query.Query("dictionary.OrderItems as oi")
+            .Where("oi.OrderId", orderId)
+            .LeftJoin("dictionary.Drinks as d", "oi.DrinkId", "d.Id")
+            .LeftJoin("dictionary.Volumes as v", "oi.VolumeId", "v.Id")
+            .LeftJoin("dictionary.Additive as Sirop", join => join.On("oi.SiropId", "Sirop.Id"))
+            .LeftJoin("dictionary.Additive as Milk", join => join.On("oi.MilkId", "Milk.Id"))
+            .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("oi.Sprinkling", "Sprinkling.Id"))
+            .Select(
+                "d.Name as DrinkName",
+                "v.Size as VolumeName",
+                "oi.SugarCount as SugarCount",
+                "oi.ExtraShot as ExtraShot",
+                "oi.Price as Price",
+                "Sirop.Name as SiropName",
+                "Milk.Name as MilkName",
+                "Sprinkling.Name as Sprinkling"
+            );
 
-           .LeftJoin("dictionary.Additive as Sirop", join => join.On("oi.SiropId", "Sirop.Id"))
-           .Select("Sirop.Name as SiropName")
-
-           .LeftJoin("dictionary.Additive as Milk", join => join.On("oi.MilkId", "Milk.Id"))
-           .Select("Milk.Name as MilkName")
-
-           .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("oi.Sprinkling", "Sprinkling.Id"))
-           .Select("Sprinkling.Name as Sprinkling")
-
-           .Select("d.Name as DrinkName",
-           "v.Size as VolumeName",
-           "oi.SugarCount as SugarCount",
-           "oi.ExtraShot as ExtraShot",
-           "oi.Price as Price");
-
-        var itemDescription = await _query.GetAsync<OrderItemDescriptionDTO>(query);
-
-        orderDescription.OrderItems = itemDescription;
+        orderDescription.OrderItems = await _query.GetAsync<OrderItemDescriptionDTO>(itemsQuery);
 
         return orderDescription;
     }

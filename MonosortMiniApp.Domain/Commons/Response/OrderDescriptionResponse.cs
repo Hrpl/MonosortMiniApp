@@ -9,6 +9,7 @@ namespace MonosortMiniApp.Domain.Commons.Response;
 
 public class OrderDescriptionResponse
 {
+    public int OrderId { get; set; }
     public int WaitingTime { get; set; }
     public string Status { get; set; }
     public int SummaryPrice { get; set; }

@@ -61,7 +61,7 @@ public class OrderController : ControllerBase
 
     [HttpGet("description/{orderId}")]
     [SwaggerOperation(Summary = "Получени описания заказа. Необходим JWT")]
-    public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetDescription([FromRoute] int orderId)
+    public async Task<ActionResult<IEnumerable<OrderDescriptionResponse>>> GetDescription([FromRoute] int orderId)
     {
         try
         {

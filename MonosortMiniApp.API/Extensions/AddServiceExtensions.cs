@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using Infrastructure.Services.Implementations;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
@@ -37,6 +38,23 @@ namespace MonosortMiniApp.API.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfigurations:Key"])),
                     ValidateIssuerSigningKey = true
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // если запрос направлен хабу
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hub/status"))
+                        {
+                            // получаем токен из строки запроса
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
             builder.Services.AddAuthorization();
         }
@@ -66,6 +84,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IConnectionService, ConnectionService>();
             services.AddScoped<OrderHub>();
         }
     }

@@ -68,5 +68,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<OrderHub>("/hub/order");
+app.MapHub<StatusHub>("/hub/status");
 
 app.Run();

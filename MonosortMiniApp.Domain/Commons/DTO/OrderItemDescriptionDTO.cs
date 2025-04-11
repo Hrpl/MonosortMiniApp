@@ -8,6 +8,7 @@ namespace MonosortMiniApp.Domain.Commons.DTO;
 
 public class OrderItemDescriptionDTO
 {
+    public int OrderId { get; set; }    
     public string DrinkName { get; set; }
     public string VolumeName { get; set; }
     public string Price { get; set; }
