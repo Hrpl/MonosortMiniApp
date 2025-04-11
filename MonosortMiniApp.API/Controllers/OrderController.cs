@@ -35,7 +35,7 @@ public class OrderController : ControllerBase
     [HttpGet("all")]
     [Authorize]
     [SwaggerOperation(Summary = "Получени заказов пользователя для Web. Необходим JWT")]
-    public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
+    public async Task<ActionResult<IEnumerable<OrderDescriptionResponse>>> GetAll()
     {
         try
         {
