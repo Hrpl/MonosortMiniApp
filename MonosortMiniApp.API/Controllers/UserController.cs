@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Commons.Templates;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
@@ -52,7 +54,34 @@ public class UserController : ControllerBase
         else throw new Exception("Неверный email адрес!");
     }
 
-    // POST api/<UserController>
+    [HttpGet("profile")]
+    [Authorize]
+    public async Task<ActionResult<GetProfileResponse>> GetProfile()
+    {
+        try
+        {
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
+            }
+
+            var response = await _userService.GetProfileAsync(userId);
+
+            if (response != null) return Ok(response);
+            else return BadRequest("Данных не найдено");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Internal server error!");
+        }
+    }
+
     [HttpPost("create")]
     public async Task<ActionResult> Create([FromBody] CreateUserRequest req)
     {
@@ -83,6 +112,5 @@ public class UserController : ControllerBase
         {
             return BadRequest("Ошибка при создании пользователя");
         }
-
     }
 }

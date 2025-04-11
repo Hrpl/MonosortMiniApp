@@ -55,7 +55,8 @@ public class OrderService : IOrderService
             "o.SummaryPrice as SummaryPrice",
             "o.CreatedAt as CreatedTime"
         )
-        .OrderByDesc("o.CreatedAt");
+        .OrderByDesc("o.CreatedAt")
+        .Take(10);
 
         var orders = await _query.GetAsync<GetAllOrders>(ordersQuery);
 

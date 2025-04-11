@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
 using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -18,4 +19,5 @@ public interface IUserService
     public Task UserConfirmAsync(string login);
     public Task DeleteUserAsync(string login);
     public Task<int> GetUserIdAsync(string login);
+    public Task<GetProfileResponse> GetProfileAsync(string id);
 }

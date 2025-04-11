@@ -1,5 +1,6 @@
 ﻿
 using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using SqlKata;
@@ -40,6 +41,18 @@ public class UserService : IUserService
         var query = _query.Query(TableName).Where("Login", login).AsDelete();
 
         await _query.ExecuteAsync(query);
+    }
+
+    public async Task<GetProfileResponse> GetProfileAsync(string id)
+    {
+        var query = _query.Query(TableName)
+            .Where("Id", Convert.ToInt32(id))
+            .Select("Login",
+            "Name");
+
+        var result = await _query.FirstOrDefaultAsync<GetProfileResponse>(query);
+        return result;
+
     }
 
     public Task<UserModel> GetUserAsync(string login)
