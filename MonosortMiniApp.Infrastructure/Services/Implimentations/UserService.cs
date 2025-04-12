@@ -47,7 +47,7 @@ public class UserService : IUserService
     {
         var query = _query.Query(TableName)
             .Where("Id", Convert.ToInt32(id))
-            .Select("Login",
+            .Select("Login as Email",
             "Name");
 
         var result = await _query.FirstOrDefaultAsync<GetProfileResponse>(query);
