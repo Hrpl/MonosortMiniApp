@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.SignalR;
 using MonosortMiniApp.Domain.Models;
+using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,10 +11,11 @@ namespace MonosortMiniApp.Infrastructure.Hubs;
 public class StatusHub : Hub
 {
     private readonly IConnectionService _connectionService;
-
-    public StatusHub(IConnectionService connectionService)
+    private readonly IOrderService _orderService;
+    public StatusHub(IConnectionService connectionService, IOrderService orderService)
     {
         _connectionService = connectionService;
+        _orderService = orderService;
     }
 
     public override async Task OnConnectedAsync()
@@ -28,6 +30,8 @@ public class StatusHub : Hub
         };
 
         await _connectionService.CreateConnectionEntityAsync(connect);
+
+        await this.Clients.Client(Context.ConnectionId).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
 
         await base.OnConnectedAsync();
     }
