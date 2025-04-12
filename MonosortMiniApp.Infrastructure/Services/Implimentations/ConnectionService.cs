@@ -43,7 +43,7 @@ public class ConnectionService : IConnectionService
     {
         var query = _query.Query(TableName)
             .When(userId != null, q => q.Where("UserId", userId))
-            .Select("UserId as UserId")
+            .Select("ConnectionId")
             .Where("IsDeleted", false); 
 
         var connections = await _query.GetAsync<string>(query);
