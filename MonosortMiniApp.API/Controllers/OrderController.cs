@@ -151,8 +151,21 @@ public class OrderController : ControllerBase
 
                 var connections = await _connectionService.GetAllConnectionsAsync(userId);
 
-                if(status == 3) textStatus = "Готов к выдаче";
-                if (status == 4) textStatus = "Завершён";
+                switch (status)
+                {
+                    case 1:
+                        textStatus = "Принят";
+                        break;
+                    case 3:
+                        textStatus = "Готов к выдаче";
+                        break;
+                    case 4:
+                        textStatus = "Завершён";
+                        break;
+                    default:
+                        textStatus = "Неизвестный статус"; // или можно оставить пустую строку
+                        break;
+                }
 
                 foreach (var connection in connections)
                 {
