@@ -12,7 +12,7 @@ namespace Infrastructure.Services.Implementations;
 public class ConnectionService : IConnectionService
 {
     private readonly QueryFactory _query;
-    private string TableName = "dictionary.Connections";
+    private string TableName = "public.Connections";
     public ConnectionService(IDbConnectionManager connectionManager)
     {
         _query = connectionManager.PostgresQueryFactory;
@@ -33,7 +33,7 @@ public class ConnectionService : IConnectionService
     public async Task DeleteConnectionAsync(string connectionId)
     {
         var query = _query.Query(TableName)
-            .Where("connection_id", connectionId)
+            .Where("ConnectionId", connectionId)
             .AsDelete();
 
         await _query.ExecuteAsync(query);
@@ -42,9 +42,9 @@ public class ConnectionService : IConnectionService
     public async Task<List<string>> GetAllConnectionsAsync(int? userId)
     {
         var query = _query.Query(TableName)
-            .When(userId != null, q => q.Where("user_id", userId))
-            .Select("user_id as UserId")
-            .Where("is_deleted", false); 
+            .When(userId != null, q => q.Where("UserId", userId))
+            .Select("UserId as UserId")
+            .Where("IsDeleted", false); 
 
         var connections = await _query.GetAsync<string>(query);
 
