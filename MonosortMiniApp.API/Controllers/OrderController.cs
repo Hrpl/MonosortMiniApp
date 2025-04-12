@@ -22,14 +22,24 @@ public class OrderController : ControllerBase
     private readonly ICartService _cartService;
     private readonly IHubContext<OrderHub> _hubContext;
     private readonly ILogger<OrderController> _logger;
+    private readonly IHubContext<StatusHub> _hubStatus;
+    private readonly IConnectionService _connectionService;
 
-    public OrderController(IMapper mapper, IOrderService orderService, ICartService cartService, IHubContext<OrderHub> hubContext, ILogger<OrderController> logger)
+    public OrderController(IMapper mapper, 
+        IOrderService orderService, 
+        ICartService cartService, 
+        IHubContext<OrderHub> hubContext, 
+        ILogger<OrderController> logger,
+        IHubContext<StatusHub> hubStatus,
+        IConnectionService connectionService)
     {
         _mapper = mapper;
         _orderService = orderService;
         _cartService = cartService;
         _hubContext = hubContext;
         _logger = logger;
+        _hubStatus = hubStatus;
+        _connectionService = connectionService;
     }
 
     [HttpGet("all")]
@@ -96,6 +106,19 @@ public class OrderController : ControllerBase
         try
         {
             _orderService.UpdateStatusAsync(status, id);
+
+            if(status != 2)
+            {
+                var userId = await _orderService.GetUserIdOrderAsync(id);
+
+                var connections = await _connectionService.GetAllConnectionsAsync(userId);
+
+                foreach (var connection in connections)
+                {
+                    await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id});
+                }
+            }
+
             return NoContent();
         }
         catch (Exception ex)
@@ -111,6 +134,16 @@ public class OrderController : ControllerBase
         try
         {
             _orderService.UpdateTimeAsync(minuts, id);
+
+            var userId = await _orderService.GetUserIdOrderAsync(id);
+
+            var connections = await _connectionService.GetAllConnectionsAsync(userId);
+
+            foreach (var connection in connections)
+            {
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = 2, Number = id , WaitingTime = DateTime.Now.AddMinutes(minuts)});
+            }
+
             return NoContent();
         }
         catch (Exception ex)

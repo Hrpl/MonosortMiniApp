@@ -219,4 +219,15 @@ public class OrderService : IOrderService
             UpdatedAt = DateTime.UtcNow
         });
     }
+
+    public async Task<int> GetUserIdOrderAsync(int orderId)
+    {
+        var query = _query.Query("dictionary.Orders as o")
+            .Where("o.Id", orderId)
+            .Select("o.UserId");
+
+        var result = await _query.FirstOrDefaultAsync<int>(query);
+
+        return result;
+    }
 }
