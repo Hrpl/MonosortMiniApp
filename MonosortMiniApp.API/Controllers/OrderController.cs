@@ -89,7 +89,7 @@ public class OrderController : ControllerBase
                 });
             }
 
-            var result = await _orderService.GetAllOrders(Convert.ToInt32(userId));
+            var result = await _orderService.GetAllOrders(Convert.ToInt32(userId), false);
             return Ok(result);
         }
         catch (Exception ex)
@@ -145,7 +145,7 @@ public class OrderController : ControllerBase
                 foreach (var connection in connections)
                 {
                     await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id, WaitingTime = null});
-                    await _hubStatus.Clients.Client(connection).SendAsync("Active", new StatusHubResponse { Status = status, Number = id, WaitingTime = null });
+                    await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(userId, true));
                 }
             }
 
@@ -172,6 +172,7 @@ public class OrderController : ControllerBase
             foreach (var connection in connections)
             {
                 await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = 2, Number = id , WaitingTime = DateTime.Now.AddMinutes(minuts)});
+                await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(userId, true));
             }
 
             return NoContent();
@@ -210,6 +211,14 @@ public class OrderController : ControllerBase
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
 
             await _hubContext.Clients.All.SendAsync("SendOrderId", orderId, DateTime.UtcNow);
+
+            var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
+
+            foreach (var connection in connections)
+            {
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = 1, Number = orderId, WaitingTime = null });
+                await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(Convert.ToInt32(userId), true));
+            }
 
             return Created();
         }

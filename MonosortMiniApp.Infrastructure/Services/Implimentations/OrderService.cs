@@ -44,11 +44,14 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId)
+    public async Task<IEnumerable<GetAllOrders>> GetAllOrders(int userId, bool onlyActive)
     {
         var ordersQuery = _query.Query("dictionary.Orders as o")
         .LeftJoin("dictionary.OrderStatus as os", "o.StatusId", "os.Id")
-        .Where("o.UserId", userId)
+        .Where(q => q
+                .Where("o.UserId", userId)
+                .When(onlyActive, q => q.WhereIn("o.StatusId", new[] { 1, 2, 3 }), q => q.Where("o.StatusId", 4))
+            )
         .Select(
             "o.Id as OrderId",
             "os.Name as Status",
