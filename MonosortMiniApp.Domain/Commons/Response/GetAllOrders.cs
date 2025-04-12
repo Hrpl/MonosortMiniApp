@@ -12,6 +12,8 @@ public class GetAllOrders
     public int OrderId { get; set; }
     public int SummaryPrice { get; set; }
     public string Status { get; set; }
+    public int WaitingTime { get; set; }
+    public DateTime? ReadyTime { get; set; }
     public DateTime CreatedTime { get; set; }
     public IEnumerable<OrderItemDescriptionDTO> OrderItems { get; set; }
 }

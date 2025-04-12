@@ -56,7 +56,8 @@ public class OrderService : IOrderService
             "o.Id as OrderId",
             "os.Name as Status",
             "o.SummaryPrice as SummaryPrice",
-            "o.CreatedAt as CreatedTime"
+            "o.CreatedAt as CreatedTime",
+            "o.WaitingTime as WaitingTime"
         )
         .OrderByDesc("o.CreatedAt")
         .Take(10);
@@ -65,6 +66,18 @@ public class OrderService : IOrderService
 
         if (orders == null || !orders.Any())
             return new List<GetAllOrders>();
+
+        foreach (var order in orders)
+        {
+            if (order.CreatedTime != null && order.WaitingTime > 0 && order.Status == "Готовится")
+            {
+                order.ReadyTime = order.CreatedTime.AddMinutes(order.WaitingTime);
+            }
+            else
+            {
+                order.ReadyTime = null;
+            }
+        }
 
         // Получаем все ID заказов для выборки позиций
         var orderIds = orders.Select(o => o.OrderId).ToList();
