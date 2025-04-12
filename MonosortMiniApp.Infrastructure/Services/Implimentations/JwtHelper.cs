@@ -15,7 +15,7 @@ public class JwtHelper : IJwtHelper
 {
     public JwtResponse CreateJwtAsync(int userId)
     {
-        var expires = DateTime.UtcNow.AddHours(2);
+        var expires = DateTime.UtcNow.AddHours(14);
         var jwt = new JwtSecurityToken(
             issuer: "Server",
             expires: expires,

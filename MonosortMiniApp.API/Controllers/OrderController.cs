@@ -142,6 +142,7 @@ public class OrderController : ControllerBase
     {
         try
         {
+            string textStatus = "";
             _orderService.UpdateStatusAsync(status, id);
 
             if(status != 2)
@@ -150,9 +151,12 @@ public class OrderController : ControllerBase
 
                 var connections = await _connectionService.GetAllConnectionsAsync(userId);
 
+                if(status == 3) textStatus = "Готов";
+                if (status == 4) textStatus = "Выполнен";
+
                 foreach (var connection in connections)
                 {
-                    await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id, WaitingTime = null});
+                    await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = textStatus, Number = id, WaitingTime = null});
                     await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
                 }
             }
@@ -179,7 +183,7 @@ public class OrderController : ControllerBase
 
             foreach (var connection in connections)
             {
-                await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = 2, Number = id , WaitingTime = DateTime.Now.AddMinutes(minuts)});
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = "Готовится", Number = id , WaitingTime = DateTime.Now.AddMinutes(minuts)});
                 await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
             }
 
