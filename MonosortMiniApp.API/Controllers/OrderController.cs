@@ -42,6 +42,35 @@ public class OrderController : ControllerBase
         _connectionService = connectionService;
     }
 
+    [HttpGet("active")]
+    [Authorize]
+    [SwaggerOperation(Summary = "Получени заказов пользователя для Web. Необходим JWT")]
+    public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetActive()
+    {
+        try
+        {
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Unauthorized",
+                    Detail = "Invalid user ID in token."
+                });
+            }
+
+            var result = await _orderService.GetLastActive(Convert.ToInt32(userId));
+            if (result == null) return NotFound();
+            else return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Ошибка получения заказов: {ex.Message}");
+        }
+    }
+
+
     [HttpGet("all")]
     [Authorize]
     [SwaggerOperation(Summary = "Получени заказов пользователя для Web. Необходим JWT")]
@@ -116,6 +145,7 @@ public class OrderController : ControllerBase
                 foreach (var connection in connections)
                 {
                     await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id, WaitingTime = null});
+                    await _hubStatus.Clients.Client(connection).SendAsync("Active", new StatusHubResponse { Status = status, Number = id, WaitingTime = null });
                 }
             }
 

@@ -112,7 +112,7 @@ public class OrderService : IOrderService
 
     public void UpdateStatusAsync(int status, int id)
     {
-        if(status == 2) 
+        if (status == 2)
         {
             _query.Query("dictionary.Orders").Where("Id", id).Update(new
             {
@@ -133,7 +133,7 @@ public class OrderService : IOrderService
     {
         foreach (var model in models)
         {
-             _query.Query("dictionary.OrderItems").Insert(model);
+            _query.Query("dictionary.OrderItems").Insert(model);
         }
     }
 
@@ -227,6 +227,25 @@ public class OrderService : IOrderService
             .Select("o.UserId");
 
         var result = await _query.FirstOrDefaultAsync<int>(query);
+
+        return result;
+    }
+
+    public async Task<StatusOrderDTO> GetLastActive(int userId)
+    {
+        var query = _query.Query("dictionary.Orders as o")
+            .Where(q => q
+                .Where("o.CreatedAt", ">=", DateTime.Now.AddDays(-1))
+                .Where("o.UserId", userId)
+                .WhereIn("o.StatusId", new[] { 1, 2, 3 })
+            )
+            .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
+            .Select("o.Id as Number",
+            "o.SummaryPrice as Price",
+            "os.Name as Status")
+            .OrderByDesc("o.CreatedAt");
+
+        var result = await _query.FirstOrDefaultAsync<StatusOrderDTO>(query);
 
         return result;
     }
