@@ -151,8 +151,8 @@ public class OrderController : ControllerBase
 
                 var connections = await _connectionService.GetAllConnectionsAsync(userId);
 
-                if(status == 3) textStatus = "Готов";
-                if (status == 4) textStatus = "Выполнен";
+                if(status == 3) textStatus = "Готов к выдаче";
+                if (status == 4) textStatus = "Завершён";
 
                 foreach (var connection in connections)
                 {
