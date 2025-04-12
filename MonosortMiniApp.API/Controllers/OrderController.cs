@@ -90,6 +90,14 @@ public class OrderController : ControllerBase
             }
 
             var result = await _orderService.GetAllOrders(Convert.ToInt32(userId), false);
+
+            var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
+
+            foreach (var connection in connections)
+            {
+                await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(Convert.ToInt32(userId), true));
+            }
+
             return Ok(result);
         }
         catch (Exception ex)
