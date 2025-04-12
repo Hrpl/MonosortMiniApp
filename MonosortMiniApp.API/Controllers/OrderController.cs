@@ -115,7 +115,7 @@ public class OrderController : ControllerBase
 
                 foreach (var connection in connections)
                 {
-                    await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id});
+                    await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id, WaitingTime = null});
                 }
             }
 
