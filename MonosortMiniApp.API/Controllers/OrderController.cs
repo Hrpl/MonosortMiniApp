@@ -44,7 +44,7 @@ public class OrderController : ControllerBase
 
     [HttpGet("active")]
     [Authorize]
-    [SwaggerOperation(Summary = "Получени заказов пользователя для Web. Необходим JWT")]
+    [SwaggerOperation(Summary = "Получение активного заказа. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetActive()
     {
         try
@@ -73,7 +73,7 @@ public class OrderController : ControllerBase
 
     [HttpGet("all")]
     [Authorize]
-    [SwaggerOperation(Summary = "Получени заказов пользователя для Web. Необходим JWT")]
+    [SwaggerOperation(Summary = "Получение заказов пользователя для Web. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
     {
         try
@@ -95,7 +95,7 @@ public class OrderController : ControllerBase
 
             foreach (var connection in connections)
             {
-                await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(Convert.ToInt32(userId), true));
+                await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
             }
 
             return Ok(result);
@@ -107,7 +107,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("description/{orderId}")]
-    [SwaggerOperation(Summary = "Получени описания заказа. Необходим JWT")]
+    [SwaggerOperation(Summary = "Получение описания заказа. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<OrderDescriptionResponse>>> GetDescription([FromRoute] int orderId)
     {
         try
@@ -122,7 +122,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("status")]
-    [SwaggerOperation(Summary = "Получени закозов в ТГ Bote. Необходим JWT")]
+    [SwaggerOperation(Summary = "Получение заказов в ТГ Bote. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<StatusOrderDTO>>> GetStatusOrder()
     {
         try
@@ -153,7 +153,7 @@ public class OrderController : ControllerBase
                 foreach (var connection in connections)
                 {
                     await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = status, Number = id, WaitingTime = null});
-                    await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(userId, true));
+                    await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
                 }
             }
 
@@ -180,7 +180,7 @@ public class OrderController : ControllerBase
             foreach (var connection in connections)
             {
                 await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = 2, Number = id , WaitingTime = DateTime.Now.AddMinutes(minuts)});
-                await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(userId, true));
+                await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
             }
 
             return NoContent();
@@ -225,7 +225,7 @@ public class OrderController : ControllerBase
             foreach (var connection in connections)
             {
                 await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = 1, Number = orderId, WaitingTime = null });
-                await _hubStatus.Clients.Client(connection).SendAsync("Active", _orderService.GetAllOrders(Convert.ToInt32(userId), true));
+                await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
             }
 
             return Created();
