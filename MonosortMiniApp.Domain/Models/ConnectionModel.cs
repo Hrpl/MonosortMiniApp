@@ -11,6 +11,6 @@ public class ConnectionModel
     public string ConnectionId { get; set; }
     public int UserId { get; set; }
     public DateTime? CreatedAt { get; set; }
-    public DateTime? UpdateAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public bool? IsDeleted { get; set; }
 }
