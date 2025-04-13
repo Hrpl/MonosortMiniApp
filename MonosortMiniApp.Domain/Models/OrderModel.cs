@@ -9,6 +9,6 @@ public class OrderModel
     public int StatusId { get; set; }
     public string Comment { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;
 }

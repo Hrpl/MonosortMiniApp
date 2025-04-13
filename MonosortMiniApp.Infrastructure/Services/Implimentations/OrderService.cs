@@ -6,6 +6,7 @@ using MonosortMiniApp.Domain.Entities;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Hubs;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
+using SqlKata;
 using SqlKata.Execution;
 using IMapper = MapsterMapper.IMapper;
 
@@ -14,10 +15,12 @@ namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 public class OrderService : IOrderService
 {
     private readonly QueryFactory _query;
+    private readonly IMapper _mapper;
 
-    public OrderService(IDbConnectionManager query)
+    public OrderService(IDbConnectionManager query, IMapper mapper)
     {
         _query = query.PostgresQueryFactory;
+        _mapper = mapper;
     }
 
     public async Task<int> CreateOrderAsync(OrderModel model)
@@ -57,27 +60,36 @@ public class OrderService : IOrderService
             "os.Name as Status",
             "o.SummaryPrice as SummaryPrice",
             "o.CreatedAt as CreatedTime",
-            "o.WaitingTime as WaitingTime"
+            "o.WaitingTime as WaitingTime",
+            "o.UpdatedAt as UpdatedAt"
         )
         .OrderByDesc("o.CreatedAt")
         .Take(10);
 
-        var orders = await _query.GetAsync<GetAllOrders>(ordersQuery);
+        var ordersResponse = await _query.GetAsync<GetAllOrdersModel>(ordersQuery);
 
-        if (orders == null || !orders.Any())
+        if (ordersResponse == null || !ordersResponse.Any())
             return new List<GetAllOrders>();
 
-        foreach (var order in orders)
+        foreach (var order in ordersResponse)
         {
-            if (order.CreatedTime != null && order.WaitingTime > 0 && order.Status == "Готовится")
+            if (order.WaitingTime > 0 && order.Status == "Готовится" && order.UpdatedAt != null)
             {
-                order.ReadyTime = order.CreatedTime.AddMinutes(order.WaitingTime);
+                order.ReadyTime = order.UpdatedAt.Value.AddMinutes(order.WaitingTime).ToString("hh:mm");
             }
             else
             {
                 order.ReadyTime = null;
             }
         }
+        List<GetAllOrders> orders = new List<GetAllOrders>();
+
+        foreach (var order in ordersResponse)
+        {
+            var orderMap = _mapper.Map<GetAllOrders>(order);
+            orders.Add(orderMap);
+        }
+        
 
         // Получаем все ID заказов для выборки позиций
         var orderIds = orders.Select(o => o.OrderId).ToList();
@@ -250,7 +262,7 @@ public class OrderService : IOrderService
         return result;
     }
 
-    public async Task<StatusOrderDTO> GetLastActive(int userId)
+    public async Task<LastOrderDTO> GetLastActive(int userId)
     {
         var query = _query.Query("dictionary.Orders as o")
             .Where(q => q
@@ -261,10 +273,18 @@ public class OrderService : IOrderService
             .LeftJoin("dictionary.OrderStatus as os", "os.Id", "o.StatusId")
             .Select("o.Id as Number",
             "o.SummaryPrice as Price",
-            "os.Name as Status")
+            "os.Name as Status",
+            "o.WaitingTime as WaitingTime",
+            "o.UpdatedAt as UpdatedAt")
             .OrderByDesc("o.CreatedAt");
 
-        var result = await _query.FirstOrDefaultAsync<StatusOrderDTO>(query);
+        var model = await _query.FirstOrDefaultAsync<LastOrderModel>(query);
+        var result = _mapper.Map<LastOrderDTO>(model);
+
+        if (model.Status == "Готовится" && model.UpdatedAt != null)
+        {
+            result.ReadyTime = model.UpdatedAt.Value.AddMinutes(model.WaitingTime).ToString("hh:mm");
+        }
 
         return result;
     }

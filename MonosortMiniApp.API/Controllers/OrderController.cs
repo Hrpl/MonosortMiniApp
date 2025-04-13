@@ -45,7 +45,7 @@ public class OrderController : ControllerBase
     [HttpGet("active")]
     [Authorize]
     [SwaggerOperation(Summary = "Получение активного заказа. Необходим JWT")]
-    public async Task<ActionResult<GetAllOrders>> GetActive()
+    public async Task<ActionResult<LastOrderDTO>> GetActive()
     {
         try
         {
