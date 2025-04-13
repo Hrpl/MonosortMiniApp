@@ -79,7 +79,7 @@ public class OrderService : IOrderService
             if (order.WaitingTime > 0 && order.Status == "Готовится" && order.UpdatedAt != null)
             {
                 _logger.LogInformation($"Время UpdatedAt: {order.UpdatedAt}, WaitingTime: {order.WaitingTime}");
-                order.ReadyTime = order.UpdatedAt.Value.AddMinutes(order.WaitingTime).ToString("hh:mm");
+                order.ReadyTime = order.UpdatedAt.Value.AddMinutes(order.WaitingTime).ToLocalTime().ToString("HH:mm");
                 _logger.LogInformation($"Время готовности: {order.ReadyTime}");
             }
             else
@@ -290,7 +290,7 @@ public class OrderService : IOrderService
         if (model.Status == "Готовится" && model.UpdatedAt != null)
         {
             _logger.LogInformation($"Время UpdatedAt: {model.UpdatedAt}, WaitingTime: {model.WaitingTime}");
-            result.ReadyTime = model.UpdatedAt.Value.AddMinutes(model.WaitingTime).ToString("hh:mm");
+            result.ReadyTime = model.UpdatedAt.Value.AddMinutes(model.WaitingTime).ToLocalTime().ToString("HH:mm");
             _logger.LogInformation($"Время готовности: {result.ReadyTime}");
         }
 
