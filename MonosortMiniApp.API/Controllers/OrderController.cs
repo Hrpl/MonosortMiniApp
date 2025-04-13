@@ -169,7 +169,7 @@ public class OrderController : ControllerBase
 
                 foreach (var connection in connections)
                 {
-                    await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = textStatus, Number = id, WaitingTime = null});
+                    await _hubStatus.Clients.Client(connection).SendAsync("Status", await _orderService.GetLastActive(userId));
                     await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
                 }
             }
@@ -196,7 +196,7 @@ public class OrderController : ControllerBase
 
             foreach (var connection in connections)
             {
-                await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = "Готовится", Number = id , WaitingTime = DateTime.Now.AddMinutes(minuts)});
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", await _orderService.GetLastActive(userId));
                 await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
             }
 
@@ -241,7 +241,7 @@ public class OrderController : ControllerBase
 
             foreach (var connection in connections)
             {
-                await _hubStatus.Clients.Client(connection).SendAsync("Status", new StatusHubResponse { Status = "Принят", Number = orderId, WaitingTime = null });
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", await _orderService.GetLastActive(Convert.ToInt32(userId)));
                 await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
             }
 
