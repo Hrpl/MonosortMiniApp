@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
@@ -15,12 +16,14 @@ namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 public class OrderService : IOrderService
 {
     private readonly QueryFactory _query;
+    private readonly ILogger<OrderService> _logger;
     private readonly IMapper _mapper;
 
-    public OrderService(IDbConnectionManager query, IMapper mapper)
+    public OrderService(IDbConnectionManager query, IMapper mapper, ILogger<OrderService> logger)
     {
         _query = query.PostgresQueryFactory;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<int> CreateOrderAsync(OrderModel model)
@@ -75,7 +78,9 @@ public class OrderService : IOrderService
         {
             if (order.WaitingTime > 0 && order.Status == "Готовится" && order.UpdatedAt != null)
             {
+                _logger.LogInformation($"Время UpdatedAt: {order.UpdatedAt}, WaitingTime: {order.WaitingTime}");
                 order.ReadyTime = order.UpdatedAt.Value.AddMinutes(order.WaitingTime).ToString("hh:mm");
+                _logger.LogInformation($"Время готовности: {order.ReadyTime}");
             }
             else
             {
@@ -279,11 +284,14 @@ public class OrderService : IOrderService
             .OrderByDesc("o.CreatedAt");
 
         var model = await _query.FirstOrDefaultAsync<LastOrderModel>(query);
+        
         var result = _mapper.Map<LastOrderDTO>(model);
 
         if (model.Status == "Готовится" && model.UpdatedAt != null)
         {
+            _logger.LogInformation($"Время UpdatedAt: {model.UpdatedAt}, WaitingTime: {model.WaitingTime}");
             result.ReadyTime = model.UpdatedAt.Value.AddMinutes(model.WaitingTime).ToString("hh:mm");
+            _logger.LogInformation($"Время готовности: {result.ReadyTime}");
         }
 
         return result;
