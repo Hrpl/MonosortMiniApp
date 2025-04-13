@@ -10,10 +10,10 @@ builder.AddOptionsSmtp();
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSignalR(hubOptions =>
+builder.Services.AddSignalR(options =>
 {
-    hubOptions.ClientTimeoutInterval = TimeSpan.FromMinutes(2);
-    hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(15);
+    options.ClientTimeoutInterval = TimeSpan.FromDays(365); // Почти "бесконечный" таймаут
+    options.KeepAliveInterval = TimeSpan.FromDays(365);    // Отправка "живых" пакетов раз в год (фактически отключено)
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

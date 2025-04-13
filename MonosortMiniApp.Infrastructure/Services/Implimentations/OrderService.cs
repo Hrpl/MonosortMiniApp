@@ -9,6 +9,7 @@ using MonosortMiniApp.Infrastructure.Hubs;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using SqlKata;
 using SqlKata.Execution;
+using System;
 using IMapper = MapsterMapper.IMapper;
 
 namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
@@ -18,6 +19,7 @@ public class OrderService : IOrderService
     private readonly QueryFactory _query;
     private readonly ILogger<OrderService> _logger;
     private readonly IMapper _mapper;
+    TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time");
 
     public OrderService(IDbConnectionManager query, IMapper mapper, ILogger<OrderService> logger)
     {
@@ -79,7 +81,9 @@ public class OrderService : IOrderService
             if (order.WaitingTime > 0 && order.Status == "Готовится" && order.UpdatedAt != null)
             {
                 _logger.LogInformation($"Время UpdatedAt: {order.UpdatedAt}, WaitingTime: {order.WaitingTime}");
-                order.ReadyTime = order.UpdatedAt.Value.AddMinutes(order.WaitingTime).ToLocalTime().ToString("HH:mm");
+                DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(order.UpdatedAt.Value, timeZone);
+                order.ReadyTime = localTime.AddMinutes(order.WaitingTime).ToString("HH:mm");
+
                 _logger.LogInformation($"Время готовности: {order.ReadyTime}");
             }
             else
@@ -290,7 +294,8 @@ public class OrderService : IOrderService
         if (model.Status == "Готовится" && model.UpdatedAt != null)
         {
             _logger.LogInformation($"Время UpdatedAt: {model.UpdatedAt}, WaitingTime: {model.WaitingTime}");
-            result.ReadyTime = model.UpdatedAt.Value.AddMinutes(model.WaitingTime).ToLocalTime().ToString("HH:mm");
+            DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(model.UpdatedAt.Value, timeZone);
+            result.ReadyTime = localTime.AddMinutes(model.WaitingTime).ToString("HH:mm");
             _logger.LogInformation($"Время готовности: {result.ReadyTime}");
         }
 
