@@ -158,7 +158,7 @@ public class OrderController : ControllerBase
                 foreach (var connection in connections)
                 {
                     var lastActive = await _orderService.GetLastActive(userId);
-                    if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
+                    await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
 
                     await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
                 }
@@ -188,7 +188,7 @@ public class OrderController : ControllerBase
             foreach (var connection in connections)
             {
                 var lastActive = await _orderService.GetLastActive(userId);
-                if(lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
 
                 await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
             }
@@ -236,7 +236,7 @@ public class OrderController : ControllerBase
             foreach (var connection in connections)
             {
                 var lastActive = await _orderService.GetLastActive(Convert.ToInt32(userId));
-                if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
+                await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
 
                 await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
             }
