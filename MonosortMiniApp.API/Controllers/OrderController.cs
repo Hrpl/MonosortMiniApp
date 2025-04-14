@@ -66,7 +66,9 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest($"Ошибка получения заказов: {ex.Message}");
+            
         }
     }
 
@@ -102,6 +104,7 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest($"Ошибка получения заказов: {ex.Message}");
         }
     }
@@ -117,6 +120,7 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest($"Ошибка получения заказов: {ex.Message}");
         }
     }
@@ -132,6 +136,7 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest($"Ошибка получения заказов: {ex.Message}");
         }
     }
@@ -163,6 +168,7 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest($"Ошибка обновления статуса: {ex.Message}");
         }
     }
@@ -191,6 +197,7 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest($"Ошибка обновления статуса: {ex.Message}");
         }
     }
@@ -238,6 +245,7 @@ public class OrderController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Произошла ошибка {ex.Message}");
             return BadRequest(ex.Message);
         }
     }
