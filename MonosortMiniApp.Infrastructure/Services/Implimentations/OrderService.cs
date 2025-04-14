@@ -271,7 +271,7 @@ public class OrderService : IOrderService
         return result;
     }
 
-    public async Task<LastOrderDTO> GetLastActive(int userId)
+    public async Task<LastOrderDTO?> GetLastActive(int userId)
     {
         var query = _query.Query("dictionary.Orders as o")
             .Where(q => q
@@ -288,7 +288,7 @@ public class OrderService : IOrderService
             .OrderByDesc("o.CreatedAt");
 
         var model = await _query.FirstOrDefaultAsync<LastOrderModel>(query);
-        
+        if (model == null) return null;
         var result = _mapper.Map<LastOrderDTO>(model);
 
         if (model.Status == "Готовится" && model.UpdatedAt != null)
