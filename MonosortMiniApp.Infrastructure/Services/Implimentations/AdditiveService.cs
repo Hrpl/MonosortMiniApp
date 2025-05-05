@@ -39,6 +39,8 @@ public class AdditiveService : IAdditiveService
 
         var menuId = await _query.FirstOrDefaultAsync<int>(queryDrinks);
 
+        if(menuId == 3 || menuId == 0) return new List<GetTypeAdditive>();
+
         var queryTA = _query.Query("dictionary.TypeAdditive")
             .When(menuId != 1, q => q.WhereNotLike("Name", "%Эспрессо%"))
             .Select("Id",

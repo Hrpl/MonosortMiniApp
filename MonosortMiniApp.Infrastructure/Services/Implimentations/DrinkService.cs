@@ -28,6 +28,7 @@ public class DrinkService : IDrinkService
             .Where("d.IsDeleted", false)
             .Select("d.Id",
             "d.Name",
+            "d.Description",
             "d.Photo",
             "d.IsExistence");
 
@@ -36,7 +37,8 @@ public class DrinkService : IDrinkService
         var queryVolumes = _query.Query("dictionary.PriceDrink as pd")
             .Join("dictionary.Volumes as v", "v.Id", "pd.VolumeId")
             .Where("DrinkId", drinkId)
-            .Select("pd.Price",
+            .Select("v.Id as VolumeId",
+            "pd.Price",
             "v.Name",
             "v.Size");
         var volumes = await _query.GetAsync<VolumePriceModel>(queryVolumes);
