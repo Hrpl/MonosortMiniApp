@@ -11,10 +11,7 @@ public class RabbitMq : IRabbitMq
     public async Task SendOrder(string message)
     {
         var factory = new ConnectionFactory { 
-            HostName = "host.docker.internal",
-            Port = 5672,
-            UserName = "admin",    // По умолчанию
-            Password = "secret",
+            HostName = "localhost"
         };
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
