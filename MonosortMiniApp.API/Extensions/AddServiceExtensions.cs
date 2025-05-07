@@ -85,6 +85,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IConnectionService, ConnectionService>();
+            services.AddScoped<IRabbitMq, RabbitMq>();
             services.AddScoped<OrderHub>();
             services.AddScoped<StatusHub>();
         }

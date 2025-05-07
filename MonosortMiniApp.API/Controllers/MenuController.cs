@@ -49,7 +49,7 @@ namespace MonosortMiniApp.API.Controllers
         }
 
         [HttpGet("any/{typeId}")]
-        public async Task<ActionResult<GetProductsResponse>> GetAny([FromRoute] int typeId)
+        public async Task<ActionResult<ProductResponse>> GetAny([FromRoute] int typeId)
         {
             var response = await _drinkService.GetDrinkAsync(typeId);
 

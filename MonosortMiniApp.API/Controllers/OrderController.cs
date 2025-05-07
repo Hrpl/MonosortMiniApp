@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Commons.Response;
@@ -25,13 +26,16 @@ public class OrderController : ControllerBase
     private readonly IHubContext<StatusHub> _hubStatus;
     private readonly IConnectionService _connectionService;
 
+    private readonly IRabbitMq _rabbitMq;
+
     public OrderController(IMapper mapper, 
         IOrderService orderService, 
         ICartService cartService, 
         IHubContext<OrderHub> hubContext, 
         ILogger<OrderController> logger,
         IHubContext<StatusHub> hubStatus,
-        IConnectionService connectionService)
+        IConnectionService connectionService,
+        IRabbitMq rabbitMq)
     {
         _mapper = mapper;
         _orderService = orderService;
@@ -40,6 +44,7 @@ public class OrderController : ControllerBase
         _logger = logger;
         _hubStatus = hubStatus;
         _connectionService = connectionService;
+        _rabbitMq = rabbitMq;
     }
 
     [HttpGet("active")]
@@ -232,7 +237,9 @@ public class OrderController : ControllerBase
 
             await _cartService.DeleteAllCart(Convert.ToInt32(userId));
 
-            await _hubContext.Clients.All.SendAsync("SendOrderId", orderId, DateTime.UtcNow);
+            var orderDTO = new SendOrderDTO { OrderId = orderId, Date = DateTime.UtcNow };
+            //кролик
+            _rabbitMq.Serialize(orderDTO);
 
             var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
 
