@@ -1,8 +1,9 @@
 version: '3.8'
 
 networks:
-  network:
-   driver: bridge
+  mono:
+   external: true
+   name: mono
 
 volumes:
   postgres_data:
@@ -22,7 +23,7 @@ services:
     depends_on:
       - db
     networks:
-      - network
+      - mono
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -39,4 +40,5 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - network
+    
+      - mono

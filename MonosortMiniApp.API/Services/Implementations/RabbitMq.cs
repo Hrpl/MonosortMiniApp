@@ -10,9 +10,7 @@ public class RabbitMq : IRabbitMq
 {
     public async Task SendOrder(string message)
     {
-        var factory = new ConnectionFactory { 
-            HostName = "localhost"
-        };
+        var factory = new ConnectionFactory { HostName = "rabbitmq"};
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
         {
