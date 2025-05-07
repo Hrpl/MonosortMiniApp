@@ -26,6 +26,4 @@ public class DrinkController : ControllerBase
         if (response != null) return Ok(response);
         else return BadRequest("Ошибка получения объёмов");
     }
-
-
 }

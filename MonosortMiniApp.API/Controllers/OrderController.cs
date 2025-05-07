@@ -28,10 +28,10 @@ public class OrderController : ControllerBase
 
     private readonly IRabbitMq _rabbitMq;
 
-    public OrderController(IMapper mapper, 
-        IOrderService orderService, 
-        ICartService cartService, 
-        IHubContext<OrderHub> hubContext, 
+    public OrderController(IMapper mapper,
+        IOrderService orderService,
+        ICartService cartService,
+        IHubContext<OrderHub> hubContext,
         ILogger<OrderController> logger,
         IHubContext<StatusHub> hubStatus,
         IConnectionService connectionService,
@@ -52,29 +52,20 @@ public class OrderController : ControllerBase
     [SwaggerOperation(Summary = "Получение активного заказа. Необходим JWT")]
     public async Task<ActionResult<LastOrderDTO>> GetActive()
     {
-        try
-        {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
+        }
 
-            var result = await _orderService.GetLastActive(Convert.ToInt32(userId));
-            if (result == null) return NotFound();
-            else return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest($"Ошибка получения заказов: {ex.Message}");
-            
-        }
+        var result = await _orderService.GetLastActive(Convert.ToInt32(userId));
+        if (result == null) return NotFound();
+        else return Ok(result);
     }
 
 
@@ -83,111 +74,53 @@ public class OrderController : ControllerBase
     [SwaggerOperation(Summary = "Получение заказов пользователя для Web. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<GetAllOrders>>> GetAll()
     {
-        try
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
         {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
-
-            if (string.IsNullOrEmpty(userId))
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
-
-            var result = await _orderService.GetAllOrders(Convert.ToInt32(userId), false);
-
-            var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
-
-            foreach (var connection in connections)
-            {
-                await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
-            }
-
-            return Ok(result);
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
         }
-        catch (Exception ex)
+
+        var result = await _orderService.GetAllOrders(Convert.ToInt32(userId), false);
+
+        var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
+
+        foreach (var connection in connections)
         {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest($"Ошибка получения заказов: {ex.Message}");
+            await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
         }
+
+        return Ok(result);
     }
 
     [HttpGet("description/{orderId}")]
     [SwaggerOperation(Summary = "Получение описания заказа. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<OrderDescriptionResponse>>> GetDescription([FromRoute] int orderId)
     {
-        try
-        {
-            var result = await _orderService.GetOrderItemDescriptionsAsync(Convert.ToInt32(orderId));
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest($"Ошибка получения заказов: {ex.Message}");
-        }
+        var result = await _orderService.GetOrderItemDescriptionsAsync(Convert.ToInt32(orderId));
+        return Ok(result);
     }
 
     [HttpGet("status")]
     [SwaggerOperation(Summary = "Получение заказов в ТГ Bote. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<StatusOrderDTO>>> GetStatusOrder()
     {
-        try
-        {
-            var result = await _orderService.GetStatusOrder();
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest($"Ошибка получения заказов: {ex.Message}");
-        }
+        var result = await _orderService.GetStatusOrder();
+        return Ok(result);
     }
 
     [HttpPatch("status")]
     [SwaggerOperation(Summary = "Изменение статуса заказа")]
     public async Task<ActionResult> UpdateStatus([FromQuery] int status, [FromQuery] int id)
     {
-        try
+        _orderService.UpdateStatusAsync(status, id);
+
+        if (status != 2)
         {
-            _orderService.UpdateStatusAsync(status, id);
-
-            if(status != 2)
-            {
-                var userId = await _orderService.GetUserIdOrderAsync(id);
-
-                var connections = await _connectionService.GetAllConnectionsAsync(userId);
-
-                foreach (var connection in connections)
-                {
-                    var lastActive = await _orderService.GetLastActive(userId);
-
-                    if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
-                    else await _hubStatus.Clients.Client(connection).SendAsync("Status", new LastOrderDTO());
-
-                    await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
-                }
-            }
-
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest($"Ошибка обновления статуса: {ex.Message}");
-        }
-    }
-
-    [HttpPatch("waitingTime")]
-    [SwaggerOperation(Summary = "Установка времени готовности заказа")]
-    public async Task<ActionResult> UpdateWaitingTime([FromQuery] int minuts, [FromQuery] int id)
-    {
-        try
-        {
-            _orderService.UpdateTimeAsync(minuts, id);
-
             var userId = await _orderService.GetUserIdOrderAsync(id);
 
             var connections = await _connectionService.GetAllConnectionsAsync(userId);
@@ -195,19 +128,37 @@ public class OrderController : ControllerBase
             foreach (var connection in connections)
             {
                 var lastActive = await _orderService.GetLastActive(userId);
+
                 if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
                 else await _hubStatus.Clients.Client(connection).SendAsync("Status", new LastOrderDTO());
 
                 await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
             }
+        }
 
-            return NoContent();
-        }
-        catch (Exception ex)
+        return NoContent();
+    }
+
+    [HttpPatch("waitingTime")]
+    [SwaggerOperation(Summary = "Установка времени готовности заказа")]
+    public async Task<ActionResult> UpdateWaitingTime([FromQuery] int minuts, [FromQuery] int id)
+    {
+        _orderService.UpdateTimeAsync(minuts, id);
+
+        var userId = await _orderService.GetUserIdOrderAsync(id);
+
+        var connections = await _connectionService.GetAllConnectionsAsync(userId);
+
+        foreach (var connection in connections)
         {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest($"Ошибка обновления статуса: {ex.Message}");
+            var lastActive = await _orderService.GetLastActive(userId);
+            if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
+            else await _hubStatus.Clients.Client(connection).SendAsync("Status", new LastOrderDTO());
+
+            await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(userId, true));
         }
+
+        return NoContent();
     }
 
     [Authorize]
@@ -215,49 +166,41 @@ public class OrderController : ControllerBase
     [SwaggerOperation(Summary = "Создание заказа")]
     public async Task<ActionResult> Post([FromBody] OrderRequest request)
     {
-        try
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
         {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
-
-            if (string.IsNullOrEmpty(userId))
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
-
-            var orderModel = _mapper.Map<OrderModel>(request);
-            orderModel.WaitingTime = 0;
-            orderModel.UserId = Convert.ToInt32(userId);
-            orderModel.StatusId = 1;
-
-            var orderId = await _orderService.CreateOrderAsync(orderModel);
-
-            await _cartService.DeleteAllCart(Convert.ToInt32(userId));
-
-            var orderDTO = new SendOrderDTO { OrderId = orderId, Date = DateTime.UtcNow };
-            //кролик
-            _rabbitMq.Serialize(orderDTO);
-
-            var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
-
-            foreach (var connection in connections)
-            {
-                var lastActive = await _orderService.GetLastActive(Convert.ToInt32(userId));
-                if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
-                else await _hubStatus.Clients.Client(connection).SendAsync("Status", new LastOrderDTO());
-
-                await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
-            }
-
-            return Created();
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
         }
-        catch (Exception ex)
+
+        var orderModel = _mapper.Map<OrderModel>(request);
+        orderModel.WaitingTime = 0;
+        orderModel.UserId = Convert.ToInt32(userId);
+        orderModel.StatusId = 1;
+
+        var orderId = await _orderService.CreateOrderAsync(orderModel);
+
+        await _cartService.DeleteAllCart(Convert.ToInt32(userId));
+
+        var orderDTO = new SendOrderDTO { OrderId = orderId, Date = DateTime.UtcNow };
+        //кролик
+        _rabbitMq.Serialize(orderDTO);
+
+        var connections = await _connectionService.GetAllConnectionsAsync(Convert.ToInt32(userId));
+
+        foreach (var connection in connections)
         {
-            _logger.LogError($"Произошла ошибка {ex.Message}");
-            return BadRequest(ex.Message);
+            var lastActive = await _orderService.GetLastActive(Convert.ToInt32(userId));
+            if (lastActive != null) await _hubStatus.Clients.Client(connection).SendAsync("Status", lastActive);
+            else await _hubStatus.Clients.Client(connection).SendAsync("Status", new LastOrderDTO());
+
+            await _hubStatus.Clients.Client(connection).SendAsync("Active", await _orderService.GetAllOrders(Convert.ToInt32(userId), true));
         }
+
+        return Created();
     }
 }

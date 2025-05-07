@@ -30,57 +30,41 @@ public class CartController : ControllerBase
     [SwaggerOperation(Summary = "Получает все товары в корзине. Необходим JWT")]
     public async Task<ActionResult<IEnumerable<CartItemResponse>>> Get()
     {
-        try
-        {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
-
-            var result = await _cartService.GetCartItemsAsync(Convert.ToInt32(userId));
-            return Ok(result);
-
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        var result = await _cartService.GetCartItemsAsync(Convert.ToInt32(userId));
+        return Ok(result);
     }
 
     [HttpPost("create")]
     [SwaggerOperation(Summary = "Добавление товара в корзину. Необходим JWT")]
     public async Task<ActionResult> Post([FromBody] CartItemRequest request)
     {
-        try
-        {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
-
-            var model = _mapper.Map<CartItemModel>(request);
-
-            await _cartService.CreateCartItemAsync(Convert.ToInt32(userId), model);
-
-            return Created();
-
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        var model = _mapper.Map<CartItemModel>(request);
+
+        await _cartService.CreateCartItemAsync(Convert.ToInt32(userId), model);
+
+        return Created();
     }
 
     // DELETE api/<CartController>/5
@@ -88,53 +72,37 @@ public class CartController : ControllerBase
     [SwaggerOperation(Summary = "Удаление товара из корзины. Необходим JWT")]
     public async Task<ActionResult> Delete(int cartItemId)
     {
-        try
-        {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
-
-            await _cartService.DeleteCartItemAsync(cartItemId);
-            return Ok();
-
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        await _cartService.DeleteCartItemAsync(cartItemId);
+        return Ok();
     }
 
     [HttpDelete("all")]
     [SwaggerOperation(Summary = "Удаление всех товаров из корзины. Необходим JWT")]
     public async Task<ActionResult> DeleteAll()
     {
-        try
-        {
-            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
             {
-                return Unauthorized(new ProblemDetails
-                {
-                    Title = "Unauthorized",
-                    Detail = "Invalid user ID in token."
-                });
-            }
-
-            await _cartService.DeleteAllCart(Convert.ToInt32(userId));
-            return Ok();
-
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        await _cartService.DeleteAllCart(Convert.ToInt32(userId));
+        return Ok();
     }
 }
