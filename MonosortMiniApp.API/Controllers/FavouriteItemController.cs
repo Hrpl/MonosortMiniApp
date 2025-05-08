@@ -62,6 +62,7 @@ public class FavouriteItemController : ControllerBase
             });
         }
         var model = _mapper.Map<FavouriteItemModel>(request);
+        model.UserId = Convert.ToInt32(userId);
         await _favouriteItem.CreateFavouriteItemsAsync(model);
 
         _logger.LogInformation("Создан новый избранный напиток");
