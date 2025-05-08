@@ -2,6 +2,7 @@
 using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,6 +20,7 @@ public class DrinkController : ControllerBase
 
 
     [HttpGet("volume/{id}")]
+    [SwaggerOperation(Summary = "Получить информацию об объёмах и ценах за напиток.")]
     public async Task<ActionResult<IEnumerable<VolumePriceModel>>> GetVolume(int id)
     {
         var response = await _drinkService.GetVolumePricesAsync(id);

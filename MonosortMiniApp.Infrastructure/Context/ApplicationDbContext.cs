@@ -23,6 +23,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Connection> Connections { get; set; }
+    public DbSet<FavouriteItem> FavouriteItems { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
         Database.Migrate();
