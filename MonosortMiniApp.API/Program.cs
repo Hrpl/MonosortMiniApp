@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddDataBase(builder.Configuration);
 builder.AddJwt();
 builder.AddOptionsSmtp();
+builder.AddOpenAPI();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
