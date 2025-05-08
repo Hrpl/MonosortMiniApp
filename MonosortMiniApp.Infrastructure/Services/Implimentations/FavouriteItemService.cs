@@ -1,5 +1,6 @@
 ﻿using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Response;
+using MonosortMiniApp.Domain.Entities;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
 using SqlKata.Execution;
@@ -20,6 +21,26 @@ public class FavouriteItemService : IFavouriteItemService
         _query = connectionManager.PostgresQueryFactory;
     }
 
+    public async Task<FavouriteItemModel> GetModel(int userId)
+    {
+        var query = _query.Query(TableName)
+            .Where("f.Id", userId)
+            .Select("f.Id",
+            "f.UserId",
+            "f.Photo",
+            "f.DrinkId",
+            "f.VolumeId",
+            "f.SugarCount",
+            "f.SiropId",
+            "f.ExtraShot",
+            "f.MilkId",
+            "f.Sprinkling",
+            "f.Price");
+
+        var result = await _query.FirstAsync<FavouriteItemModel>(query);
+        return result;
+    }
+
     public async Task CreateFavouriteItemsAsync(FavouriteItemModel model)
     {
         var query = _query.Query(TableName).AsInsert(model);
@@ -35,17 +56,25 @@ public class FavouriteItemService : IFavouriteItemService
 
     public async Task<IEnumerable<FavouriteItemDTO>> GetFavouriteItems(int userId)
     {
-        var query = _query.Query(TableName)
+        var query = _query.Query("dictionary.FavouriteItem as f")
             .Where("f.UserId", userId)
-            .Select("f.Id",
-            "f.DrinkId",
-            "f.VolumeId",
-            "f.SugarCount",
-            "f.SiropId",
-            "f.ExtraShot",
-            "f.MilkId",
-            "f.Sprinkling",
-            "f.Price");
+            .LeftJoin("dictionary.Drinks as d", "f.DrinkId", "d.Id")
+            .LeftJoin("dictionary.Volumes as v", "f.VolumeId", "v.Id")
+            .LeftJoin("dictionary.Additive as Sirop", join => join.On("f.SiropId", "Sirop.Id"))
+            .LeftJoin("dictionary.Additive as Milk", join => join.On("f.MilkId", "Milk.Id"))
+            .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("f.Sprinkling", "Sprinkling.Id"))
+            .Select(
+                "f.Id as Id",
+                "d.Name as DrinkName",
+                "d.Photo as Photo",
+                "v.Size as VolumeName",
+                "f.SugarCount as SugarCount",
+                "f.ExtraShot as ExtraShot",
+                "f.Price as Price",
+                "Sirop.Name as SiropName",
+                "Milk.Name as MilkName",
+                "Sprinkling.Name as Sprinkling"
+            );
 
         var result = await _query.GetAsync<FavouriteItemDTO>(query);
         return result.ToList();

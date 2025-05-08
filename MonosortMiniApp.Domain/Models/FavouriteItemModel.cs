@@ -9,6 +9,7 @@ namespace MonosortMiniApp.Domain.Models;
 public class FavouriteItemModel
 {
     public int UserId { get; set; }
+    public string Photo { get; set; }
     public int DrinkId { get; set; }
     public int VolumeId { get; set; }
     public int SugarCount { get; set; }

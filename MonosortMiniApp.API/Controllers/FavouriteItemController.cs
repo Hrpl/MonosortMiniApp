@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MonosortMiniApp.Domain.Commons.Request;
 using MonosortMiniApp.Domain.Models;
+using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,15 +17,40 @@ namespace MonosortMiniApp.API.Controllers;
 public class FavouriteItemController : ControllerBase
 {
     private readonly IFavouriteItemService _favouriteItem;
+    private readonly ICartService _cartService;
     private readonly IMapper _mapper;
     private readonly ILogger<FavouriteItemController> _logger;
 
     public FavouriteItemController(IFavouriteItemService favouriteItem, IMapper mapper,
-        ILogger<FavouriteItemController> logger)
+        ILogger<FavouriteItemController> logger, ICartService cartService)
     {
         _favouriteItem = favouriteItem;
         _mapper = mapper;
         _logger = logger;
+        _cartService = cartService;
+    }
+
+    [HttpPost("add/order")]
+    [SwaggerOperation(Summary = "Добавление товара из избранного в корзину. Необходим JWT")]
+    public async Task<ActionResult> AddInCart([FromQuery] int id)
+    {
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
+        }
+        var favouriteModel = await _favouriteItem.GetModel(id);
+
+        var model = _mapper.Map<CartItemModel>(favouriteModel);
+
+        await _cartService.CreateCartItemAsync(Convert.ToInt32(userId), model);
+
+        return Created();
     }
 
     // GET: api/<FavouriteItemController>

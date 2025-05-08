@@ -12,6 +12,7 @@ namespace MonosortMiniApp.Domain.Entities;
 public class FavouriteItem : BaseEntity
 {
     public int UserId { get; set; }
+    public string Photo {  get; set; }
     public int DrinkId { get; set; }
     public int VolumeId { get; set; }
     public int SugarCount { get; set; }
