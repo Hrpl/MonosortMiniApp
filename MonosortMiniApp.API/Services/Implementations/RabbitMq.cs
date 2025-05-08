@@ -10,7 +10,8 @@ public class RabbitMq : IRabbitMq
 {
     public async Task SendOrder(string message)
     {
-        var factory = new ConnectionFactory { HostName = "rabbitmq",
+        var factory = new ConnectionFactory { 
+            HostName = "rabbitmq",
             UserName = "admin",     // Из environment переменных
             Password = "2208", // Из environment переменных
             Port = 5672

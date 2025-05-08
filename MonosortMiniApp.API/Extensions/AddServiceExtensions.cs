@@ -4,6 +4,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MonosortMiniApp.API.Services.Implementations;
 using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.Options;
@@ -23,6 +24,36 @@ namespace MonosortMiniApp.API.Extensions
         {
             services.AddMapster();
             services.AddRegisterService();
+        }
+        public static void AddOpenAPI(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.EnableAnnotations();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Monosort", Version = "v2024" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Authorization using jwt token. Example: \"Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
+
         }
         public static void AddJwt(this WebApplicationBuilder builder)
         {

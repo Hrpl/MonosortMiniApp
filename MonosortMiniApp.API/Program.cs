@@ -3,8 +3,9 @@ using MonosortMiniApp.API.Extensions;
 using MonosortMiniApp.API.Middleware;
 using MonosortMiniApp.Infrastructure.Hubs;
 
+
 var builder = WebApplication.CreateBuilder(args);
-builder.AddDataBase();
+builder.AddDataBase(builder.Configuration);
 builder.AddJwt();
 builder.AddOptionsSmtp();
 // Add services to the container.
@@ -18,32 +19,7 @@ builder.Services.AddSignalR(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.EnableAnnotations();
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Monosort", Version = "v2024" });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "Authorization using jwt token. Example: \"Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
-});
+
 builder.Services.AddService();
 builder.Services.AddCors();
 
