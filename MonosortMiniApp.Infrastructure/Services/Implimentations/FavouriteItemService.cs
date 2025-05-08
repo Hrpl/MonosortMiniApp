@@ -14,7 +14,7 @@ namespace MonosortMiniApp.Infrastructure.Services.Implimentations;
 public class FavouriteItemService : IFavouriteItemService
 {
     private readonly QueryFactory _query;
-    private readonly string TableName = "dictionary.FavouriteItems as f";
+    private readonly string TableName = "dictionary.FavouriteItem as f";
     public FavouriteItemService(IDbConnectionManager connectionManager)
     {
         _query = connectionManager.PostgresQueryFactory;
