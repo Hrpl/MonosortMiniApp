@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace MonosortMiniApp.API.Controllers;
 
-[Route("favourite")]
+[Route("api/favourite")]
 [Authorize]
 [ApiController]
 public class FavouriteItemController : ControllerBase
