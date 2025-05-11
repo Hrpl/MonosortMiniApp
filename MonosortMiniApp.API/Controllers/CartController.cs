@@ -28,7 +28,7 @@ public class CartController : ControllerBase
     // GET: api/<CartController>
     [HttpGet("all")]
     [SwaggerOperation(Summary = "Получает все товары в корзине. Необходим JWT")]
-    public async Task<ActionResult<IEnumerable<CartItemResponse>>> Get()
+    public async Task<ActionResult<IEnumerable<ProductItemResponse>>> Get()
     {
         var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 

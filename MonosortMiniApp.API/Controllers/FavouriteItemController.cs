@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MonosortMiniApp.Domain.Commons.DTO;
 using MonosortMiniApp.Domain.Commons.Request;
+using MonosortMiniApp.Domain.Commons.Response;
 using MonosortMiniApp.Domain.Models;
 using MonosortMiniApp.Infrastructure.Services.Implimentations;
 using MonosortMiniApp.Infrastructure.Services.Interfaces;
@@ -57,7 +58,7 @@ public class FavouriteItemController : ControllerBase
     // GET: api/<FavouriteItemController>
     [HttpGet]
     [SwaggerOperation(Summary = "Получить избранные товары для пользователя. Необходим JWT")]
-    public async Task<ActionResult<IEnumerable<FavouriteItemDTO>>> Get()
+    public async Task<ActionResult<IEnumerable<ProductItemResponse>>> Get()
     {
         var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 

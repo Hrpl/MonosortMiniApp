@@ -54,7 +54,7 @@ public class FavouriteItemService : IFavouriteItemService
         await _query.ExecuteAsync(query);
     }
 
-    public async Task<IEnumerable<FavouriteItemDTO>> GetFavouriteItems(int userId)
+    public async Task<IEnumerable<ProductItemResponse>> GetFavouriteItems(int userId)
     {
         var query = _query.Query("dictionary.FavouriteItem as f")
             .Where("f.UserId", userId)
@@ -65,9 +65,9 @@ public class FavouriteItemService : IFavouriteItemService
             .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("f.Sprinkling", "Sprinkling.Id"))
             .Select(
                 "f.Id as Id",
-                "d.Name as DrinkName",
+                "d.Name as Drink",
                 "d.Photo as Photo",
-                "v.Size as VolumeName",
+                "v.Size as Volume",
                 "f.SugarCount as SugarCount",
                 "f.ExtraShot as ExtraShot",
                 "f.Price as Price",

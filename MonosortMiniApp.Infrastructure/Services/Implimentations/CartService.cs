@@ -52,20 +52,29 @@ public class CartService : ICartService
         await _query.ExecuteAsync(query);
     }
 
-    public async Task<List<CartItemResponse>> GetCartItemsAsync(int userId)
+    public async Task<List<ProductItemResponse>> GetCartItemsAsync(int userId)
     {
         var query = _query.Query("dictionary.Cart as c")
             .Where("c.UserId", userId)
-            .Join("dictionary.CartItem as ci", "ci.CartId", "c.Id")
-            .Join("dictionary.Drinks as d", "d.Id", "ci.DrinkId")
-            .Join("dictionary.Volumes as v", "v.Id", "ci.VolumeId")
-            .Select("ci.Id",
-            "d.Photo",
-            "d.Name",
-            "v.Size as Volume",
-            "ci.Price");
+            .LeftJoin("dictionary.Drinks as d", "c.DrinkId", "d.Id")
+            .LeftJoin("dictionary.Volumes as v", "c.VolumeId", "v.Id")
+            .LeftJoin("dictionary.Additive as Sirop", join => join.On("c.SiropId", "Sirop.Id"))
+            .LeftJoin("dictionary.Additive as Milk", join => join.On("c.MilkId", "Milk.Id"))
+            .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("c.Sprinkling", "Sprinkling.Id"))
+            .Select(
+                "c.Id as Id",
+                "d.Name as Drink",
+                "d.Photo as Photo",
+                "v.Size as Volume",
+                "c.SugarCount as SugarCount",
+                "c.ExtraShot as ExtraShot",
+                "c.Price as Price",
+                "Sirop.Name as SiropName",
+                "Milk.Name as MilkName",
+                "Sprinkling.Name as Sprinkling"
+            );
 
-        var result = await _query.GetAsync<CartItemResponse>(query);
+        var result = await _query.GetAsync<ProductItemResponse>(query);
         return result.ToList();
     }
 
