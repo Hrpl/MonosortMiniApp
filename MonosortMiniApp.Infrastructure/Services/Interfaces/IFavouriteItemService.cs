@@ -10,4 +10,5 @@ public interface IFavouriteItemService
     public Task CreateFavouriteItemsAsync(FavouriteItemModel model);
     public Task DeleteFavouriteItemsAsync(int id);
     public Task<FavouriteItemModel> GetModel(int userId);
+    public Task<bool> IsContainsAsync(FavouriteItemModel model);
 }

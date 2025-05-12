@@ -79,4 +79,22 @@ public class FavouriteItemService : IFavouriteItemService
         var result = await _query.GetAsync<ProductItemResponse>(query);
         return result.ToList();
     }
+
+    public async Task<bool> IsContainsAsync(FavouriteItemModel model)
+    {
+        var query = _query.Query("dictionary.FavouriteItem")
+            .Where("UserId", model.UserId)
+        .Where("DrinkId", model.DrinkId)
+        .Where("VolumeId", model.VolumeId)
+        .Where("SugarCount", model.SugarCount)
+        .Where("MilkId", model.MilkId)
+        .Where("SiropId", model.SiropId)
+        .Where("ExtraShot", model.ExtraShot)
+        .Where("Sprinkling", model.Sprinkling)
+        .Where("Price", model.Price)
+        ;
+
+        bool exists = await _query.ExistsAsync(query);
+        return exists;
+    }
 }

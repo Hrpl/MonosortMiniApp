@@ -75,10 +75,9 @@ public class FavouriteItemController : ControllerBase
         return Ok(result);
     }
 
-    // POST api/<FavouriteItemController>
-    [HttpPost]
-    [SwaggerOperation(Summary = "Добавить новый избранный товар. Необходим JWT")]
-    public async Task<ActionResult> Post([FromBody] CreateFavouriteItemRequest request)
+    [HttpPost("contain")]
+    [SwaggerOperation(Summary = "Получить избранные товары для пользователя. Необходим JWT")]
+    public async Task<ActionResult<object> Contain([FromBody] CreateFavouriteItemRequest request)
     {
         var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
@@ -90,13 +89,32 @@ public class FavouriteItemController : ControllerBase
                 Detail = "Invalid user ID in token."
             });
         }
+
+        var result = await _favouriteItem.GetFavouriteItems(Convert.ToInt32(userId));
+        return Ok(result);
+    }
+
+    // POST api/<FavouriteItemController>
+    [HttpPost]
+    [SwaggerOperation(Summary = "Проверка добавлен ли напиток с определённой конфигурацией. Необходим JWT")]
+    public async Task<ActionResult> Post([FromBody] CreateFavouriteItemRequest request)
+    {
+        var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = "Invalid user ID in token."
+            });
+        }
         var model = _mapper.Map<FavouriteItemModel>(request);
         model.UserId = Convert.ToInt32(userId);
-        await _favouriteItem.CreateFavouriteItemsAsync(model);
+        var result = await _favouriteItem.IsContainsAsync(model);
 
-        _logger.LogInformation("Создан новый избранный напиток");
-
-        return Created();
+        return Ok(new {contain = result});
     }
 
     // DELETE api/<FavouriteItemController>/5
