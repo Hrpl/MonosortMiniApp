@@ -76,7 +76,7 @@ public class FavouriteItemService : IFavouriteItemService
                 "Sprinkling.Name as Sprinkling"
             );
 
-        var result = await _query.GetAsync<FavouriteItemDTO>(query);
+        var result = await _query.GetAsync<ProductItemResponse>(query);
         return result.ToList();
     }
 }
