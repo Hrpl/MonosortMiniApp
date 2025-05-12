@@ -56,19 +56,20 @@ public class CartService : ICartService
     {
         var query = _query.Query("dictionary.Cart as c")
             .Where("c.UserId", userId)
-            .LeftJoin("dictionary.Drinks as d", "c.DrinkId", "d.Id")
-            .LeftJoin("dictionary.Volumes as v", "c.VolumeId", "v.Id")
-            .LeftJoin("dictionary.Additive as Sirop", join => join.On("c.SiropId", "Sirop.Id"))
-            .LeftJoin("dictionary.Additive as Milk", join => join.On("c.MilkId", "Milk.Id"))
-            .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("c.Sprinkling", "Sprinkling.Id"))
+            .Join("dictionary.CartItem as ci", "ci.CartId", "c.Id")
+            .Join("dictionary.Drinks as d", "d.Id", "ci.DrinkId")
+            .LeftJoin("dictionary.Volumes as v", "ci.VolumeId", "v.Id")
+            .LeftJoin("dictionary.Additive as Sirop", join => join.On("ci.SiropId", "Sirop.Id"))
+            .LeftJoin("dictionary.Additive as Milk", join => join.On("ci.MilkId", "Milk.Id"))
+            .LeftJoin("dictionary.Additive as Sprinkling", join => join.On("ci.Sprinkling", "Sprinkling.Id"))
             .Select(
-                "c.Id as Id",
+                "ci.Id as Id",
                 "d.Name as Drink",
                 "d.Photo as Photo",
                 "v.Size as Volume",
-                "c.SugarCount as SugarCount",
-                "c.ExtraShot as ExtraShot",
-                "c.Price as Price",
+                "ci.SugarCount as SugarCount",
+                "ci.ExtraShot as ExtraShot",
+                "ci.Price as Price",
                 "Sirop.Name as SiropName",
                 "Milk.Name as MilkName",
                 "Sprinkling.Name as Sprinkling"
