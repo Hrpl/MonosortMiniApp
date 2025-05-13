@@ -77,7 +77,7 @@ public class FavouriteItemController : ControllerBase
 
     [HttpPost("contain")]
     [SwaggerOperation(Summary = "Получить избранные товары для пользователя. Необходим JWT")]
-    public async Task<ActionResult<object> Contain([FromBody] CreateFavouriteItemRequest request)
+    public async Task<ActionResult<object>> Contain([FromBody] CreateFavouriteItemRequest request)
     {
         var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
