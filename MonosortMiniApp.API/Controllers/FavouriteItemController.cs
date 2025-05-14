@@ -76,7 +76,7 @@ public class FavouriteItemController : ControllerBase
     }
 
     [HttpPost("contain")]
-    [SwaggerOperation(Summary = "Получить избранные товары для пользователя. Необходим JWT")]
+    [SwaggerOperation(Summary = "Проверка добавлен ли напиток с определённой конфигурацией. Необходим JWT")]
     public async Task<ActionResult<object>> Contain([FromBody] CreateFavouriteItemRequest request)
     {
         var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
@@ -96,7 +96,7 @@ public class FavouriteItemController : ControllerBase
 
     // POST api/<FavouriteItemController>
     [HttpPost]
-    [SwaggerOperation(Summary = "Проверка добавлен ли напиток с определённой конфигурацией. Необходим JWT")]
+    [SwaggerOperation(Summary = "Добавить товар в избранное. Необходим JWT")]
     public async Task<ActionResult> Post([FromBody] CreateFavouriteItemRequest request)
     {
         var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
