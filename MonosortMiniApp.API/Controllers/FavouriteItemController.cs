@@ -89,9 +89,11 @@ public class FavouriteItemController : ControllerBase
                 Detail = "Invalid user ID in token."
             });
         }
+        var model = _mapper.Map<FavouriteItemModel>(request);
+        model.UserId = Convert.ToInt32(userId);
+        var result = await _favouriteItem.IsContainsAsync(model);
 
-        var result = await _favouriteItem.GetFavouriteItems(Convert.ToInt32(userId));
-        return Ok(result);
+        return Ok(new { contain = result });
     }
 
     // POST api/<FavouriteItemController>
@@ -110,11 +112,13 @@ public class FavouriteItemController : ControllerBase
                 Detail = "Invalid user ID in token."
             });
         }
+
         var model = _mapper.Map<FavouriteItemModel>(request);
         model.UserId = Convert.ToInt32(userId);
-        var result = await _favouriteItem.IsContainsAsync(model);
 
-        return Ok(new {contain = result});
+        await _favouriteItem.CreateFavouriteItemsAsync(model);
+
+        return Ok();
     }
 
     // DELETE api/<FavouriteItemController>/5
