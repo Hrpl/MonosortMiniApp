@@ -94,7 +94,8 @@ public class FavouriteItemService : IFavouriteItemService
         .Where("Price", model.Price)
         ;
 
-        bool exists = await _query.ExistsAsync(query);
-        return exists;
+        var exists = await _query.FirstOrDefaultAsync<FavouriteItemModel>(query);
+        if (exists == null) return false;
+        else return true;
     }
 }
