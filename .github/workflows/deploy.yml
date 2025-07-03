@@ -22,7 +22,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            rm -rf /home/user1/MonosortMiniApp
+            rm -rf /home/user1/App-Services/MonosortMiniApp
 
 
       # Установка соединения с VPS и деплой
@@ -35,11 +35,11 @@ jobs:
           passphrase: "" # Укажите, если ключ защищён паролем
           script: |
             # Обновление или клонирование репозитория
-            git clone https://github.com/Hrpl/MonosortMiniApp.git /home/user1/MonosortMiniApp
+            git clone https://github.com/Hrpl/MonosortMiniApp.git /home/user1/App-Services/MonosortMiniApp
             
 
             # Перемещение в директорию проекта
-            cd /home/user1/MonosortMiniApp
+            cd /home/user1/App-Services/MonosortMiniApp
             docker-compose down
             docker-compose pull
             docker-compose up -d --build

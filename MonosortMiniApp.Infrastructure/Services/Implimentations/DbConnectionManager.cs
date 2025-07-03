@@ -16,7 +16,8 @@ public class DbConnectionManager : IDbConnectionManager
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<DbConnectionManager> _logger;
-    private string NpgsqlConnectionString => _configuration["ConnectionString:DefaultConnection"];
+
+    private string NpgsqlConnectionString => Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
     public DbConnectionManager(IConfiguration configuration, ILogger<DbConnectionManager> logger)
     {

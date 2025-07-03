@@ -7,10 +7,10 @@ public static class DbExtensions
 {
     public static void AddDataBase(this WebApplicationBuilder builder, IConfiguration configuration)
     {
+        var dbHost = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(
-            configuration["ConnectionString:DefaultConnection"],
+        options.UseNpgsql(dbHost,
             o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
         ));
 

@@ -11,10 +11,10 @@ public class RabbitMq : IRabbitMq
     public async Task SendOrder(string message)
     {
         var factory = new ConnectionFactory { 
-            HostName = "rabbitmq",
-            UserName = "admin",     // Из environment переменных
-            Password = "2208", // Из environment переменных
-            Port = 5672
+            HostName = Environment.GetEnvironmentVariable("RABBIT_HOST_NAME"),
+            UserName = Environment.GetEnvironmentVariable("RABBIT_USER_NAME"),     // Из environment переменных
+            Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD"), // Из environment переменных
+            Port = Convert.ToInt32( Environment.GetEnvironmentVariable("RABBIT_PORT"))
         };
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();

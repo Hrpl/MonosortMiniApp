@@ -18,6 +18,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5075
+      - DB_CONNECTION_STRING
+      - JWT_ISSUER
+      - JWT_KEY
+      - RABBIT_HOST_NAME
+      - RABBIT_USER_NAME
+      - RABBIT_PASSWORD
+      - RABBIT_PORT
     ports:
       - '5075:5075'
     depends_on:
@@ -27,6 +34,7 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    
 
   rabbitmq:
     image: rabbitmq:3-management
