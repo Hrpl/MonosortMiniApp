@@ -18,7 +18,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5075
-      - DB_CONNECTION_STRING
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_CLIENT_NAME
       - JWT_ISSUER
       - JWT_KEY
       - RABBIT_HOST_NAME
