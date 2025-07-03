@@ -17,7 +17,13 @@ public class DbConnectionManager : IDbConnectionManager
     private readonly IConfiguration _configuration;
     private readonly ILogger<DbConnectionManager> _logger;
 
-    private string NpgsqlConnectionString => Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+    private string dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+    private string dbPort = Environment.GetEnvironmentVariable("DB_PORT");
+    private string dbUser = Environment.GetEnvironmentVariable("DB_USER");
+    private string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+    private string dbName = Environment.GetEnvironmentVariable("DB_CLIENT_NAME");
+
+    private string NpgsqlConnectionString => $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword};";
 
     public DbConnectionManager(IConfiguration configuration, ILogger<DbConnectionManager> logger)
     {
