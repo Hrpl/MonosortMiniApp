@@ -1,0 +1,6 @@
+﻿namespace MonosortMiniApp.Domain.Commons.Templates;
+
+public static class SMSTemplate
+{
+    public const string SignMessage = "Приветствуем Вас в Vintiq! \n Ваш код для входа @code";
+}

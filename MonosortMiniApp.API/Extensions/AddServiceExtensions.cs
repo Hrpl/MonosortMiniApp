@@ -118,6 +118,7 @@ namespace MonosortMiniApp.API.Extensions
             services.AddScoped<IConnectionService, ConnectionService>();
             services.AddScoped<IFavouriteItemService, FavouriteItemService>();
             services.AddScoped<IRabbitMq, RabbitMq>();
+            services.AddScoped<ISendSMSService, SendSMSService>();
             services.AddScoped<OrderHub>();
             services.AddScoped<StatusHub>();
         }

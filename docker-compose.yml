@@ -29,6 +29,7 @@ services:
       - RABBIT_USER_NAME
       - RABBIT_PASSWORD
       - RABBIT_PORT
+      - SMS_TOKEN
     ports:
       - '5075:5075'
     depends_on:

@@ -17,91 +17,60 @@ public class UserService : IUserService
         _query = connectionManager.PostgresQueryFactory;
     }
 
-    public async Task<bool> CheckedUserByLoginAsync(string login)
+    public async Task<bool> CheckSecretCode(CheckSecretCodeRequest request)
     {
         var query = _query.Query(TableName)
-            .Where("Login", login)
-            .Select("Login");
+            .Where("PhoneNumber", request.PhoneNumber)
+            .Where("Code", request.Code)
+            .Select("PhoneNumber");
 
         var result = await _query.FirstOrDefaultAsync<string>(query);
 
-        if (result != null) return true;
+        if (result == request.PhoneNumber) return true;
         else return false;
     }
 
-    public async Task CreatedUserAsync(UserModel model)
+    public async Task CreateNewUserAsync(UserModel model)
     {
-        var query = _query.Query(TableName).AsInsert(model);
+        var query = _query.Query(TableName)
+            .AsInsert(model);
 
         await _query.ExecuteAsync(query);
     }
 
-    public async Task DeleteUserAsync(string login)
+    public string CreateSecretCode(UserAuthRequest request)
     {
-        var query = _query.Query(TableName).Where("Login", login).AsDelete();
+        Random rand = new Random();
+        string code = Convert.ToString(rand.Next(1000, 9999));
 
-        await _query.ExecuteAsync(query);
+        var query = _query.Query(TableName)
+            .Where("PhoneNumber", request.PhoneNumber)
+            .Update(new
+            {
+                Code = code
+            });
+
+        return code;
     }
 
-    public async Task<GetProfileResponse> GetProfileAsync(string id)
+    public async Task<int> GetUserIdAsync(string phone)
     {
         var query = _query.Query(TableName)
-            .Where("Id", Convert.ToInt32(id))
-            .Select("Login as Email",
-            "Name");
-
-        var result = await _query.FirstOrDefaultAsync<GetProfileResponse>(query);
-        return result;
-
-    }
-
-    public Task<UserModel> GetUserAsync(string login)
-    {
-        var query = _query.Query(TableName)
-            .Where("Login", login)
-            .Select("Login",
-            "Name",
-            "Password",
-            "IsConfirmed",
-            "CreatedAt",
-            "UpdatedAt");
-
-        var result = _query.FirstOrDefaultAsync<UserModel>(query);
-        return result;
-    }
-
-    public async Task<int> GetUserIdAsync(string login)
-    {
-        var query = _query.Query(TableName)
-            .Where("Login", login)
+            .Where("PhoneNumber", phone)
             .Select("Id");
 
-        var result = await _query.FirstAsync<int>(query);
-        return result;
+        var result = await _query.FirstOrDefaultAsync<int?>(query);
+        return result ?? 0;
     }
 
-    public async Task<bool> LoginUserAsync(LoginRequest request)
+    public async Task<bool> IsNewUser(UserAuthRequest request)
     {
         var query = _query.Query(TableName)
-            .Where("Login", request.Login)
-            .Where("Password", request.Password)
-            .Select("Login");
+            .Where("PhoneNumber", request.PhoneNumber);
 
-        var result = await _query.FirstOrDefaultAsync<string>(query);
+        var response = await _query.FirstOrDefaultAsync<UserModel>(query);
 
-        if (result != null) return true;
+        if (response == null) return true;
         else return false;
-    }
-
-    public async Task UserConfirmAsync(string login)
-    {
-        var query = _query.Query(TableName).Where("Login", login).AsUpdate(new
-        {
-            IsConfirmed = true
-        });
-
-        await _query.ExecuteAsync(query);
-
-        
     }
 }
