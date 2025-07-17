@@ -23,7 +23,7 @@ public class SendSMSService : ISendSMSService
             var text = SMSTemplate.SignMessage.Replace("@code", code);
             var smsToken = Environment.GetEnvironmentVariable("SMS_TOKEN");
             // URL конечной точки API
-            var url = "https://sms.ru/sms/send?api_id=" + smsToken + "&to=79054498810&msg=" + text + "&json=1";
+            var url = $"https://sms.ru/sms/send?api_id={smsToken}&to={phoneNumber}&msg={text}&json=1";
             
 
             // Конвертируем тело запроса в JSON
