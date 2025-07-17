@@ -42,4 +42,4 @@ jobs:
             cd /home/user1/App-Services/MonosortMiniApp
             docker-compose down
             docker-compose pull
-            docker-compose up -d --build
+             docker-compose --env-file ../.env up -d --build
