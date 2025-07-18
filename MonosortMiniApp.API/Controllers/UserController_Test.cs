@@ -41,7 +41,7 @@ public class UserController : ControllerBase
         var result = await _userService.CheckSecretCode(request);
         if (!result) return Unauthorized();
 
-        var id = await _userService.CheckSecretCode(request.PhoneNumber);
+        var id = await _userService.GetUserIdAsync(request.PhoneNumber);
 
         var jwt = _jwtHelper.CreateJwtAsync(id);
 
