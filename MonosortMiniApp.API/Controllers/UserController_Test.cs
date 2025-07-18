@@ -39,10 +39,9 @@ public class UserController : ControllerBase
     public async Task<ActionResult> CheckCode([FromBody] CheckSecretCodeRequest request)
     {
         var result = await _userService.CheckSecretCode(request);
+        if (!result) return Unauthorized();
 
-        var id = await _userService.GetUserIdAsync(request.PhoneNumber);
-
-        if (id == 0) return Unauthorized();
+        var id = await _userService.CheckSecretCode(request.PhoneNumber);
 
         var jwt = _jwtHelper.CreateJwtAsync(id);
 
