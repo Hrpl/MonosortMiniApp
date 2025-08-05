@@ -4,6 +4,7 @@ using MonosortMiniApp.API.Services.Interfaces;
 using MonosortMiniApp.Domain.Commons.Templates;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Newtonsoft.Json.Linq;
 
 namespace MonosortMiniApp.API.Services.Implementations;
 
@@ -20,15 +21,25 @@ public class SendSMSService : ISendSMSService
     {
         try
         {
-            var text = SMSTemplate.SignMessage.Replace("@code", code);
-            var smsToken = Environment.GetEnvironmentVariable("SMS_TOKEN");
             // URL конечной точки API
-            var url = $"https://sms.ru/sms/send?api_id={smsToken}&to={phoneNumber}&msg={text}&json=1";
-            
+            var url = "https://api.exolve.ru/messaging/v1/SendSMS";
+
+            // Формируем тело запроса
+            var payload = new
+            {
+                number = Environment.GetEnvironmentVariable("SMS_NUMBER"), //_configuration["SmsSettings:Phone"],
+                destination = phoneNumber,
+                text = SMSTemplate.SignMessage.Replace("@code", code)
+            };
 
             // Конвертируем тело запроса в JSON
-            var jsonContent = JsonConvert.SerializeObject("");
+            var jsonContent = JsonConvert.SerializeObject(payload);
             var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+
+            // Добавляем заголовок авторизации
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Environment.GetEnvironmentVariable("SMS_TOKEN"));
 
             // Выполняем POST-запрос
             var response = await _httpClient.PostAsync(url, httpContent);

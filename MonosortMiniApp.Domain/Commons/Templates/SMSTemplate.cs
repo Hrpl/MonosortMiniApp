@@ -2,5 +2,5 @@
 
 public static class SMSTemplate
 {
-    public const string SignMessage = "Ваш код для входа в приложение Monosort @code";
+    public const string SignMessage = "Ваш код для входа в приложение MonoSort @code";
 }
