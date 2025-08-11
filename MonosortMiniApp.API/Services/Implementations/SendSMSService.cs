@@ -27,7 +27,7 @@ public class SendSMSService : ISendSMSService
             // Формируем тело запроса
             var payload = new
             {
-                number = "79045661784",// Environment.GetEnvironmentVariable("SMS_NUMBER"), //_configuration["SmsSettings:Phone"],
+                number = "79016620256",// Environment.GetEnvironmentVariable("SMS_NUMBER"), //_configuration["SmsSettings:Phone"],
                 destination = phoneNumber,
                 text = SMSTemplate.SignMessage.Replace("@code", code)
             };
